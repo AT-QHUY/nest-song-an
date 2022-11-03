@@ -39,8 +39,11 @@ export const cartSlice = createSlice({
             state.cart = { listBillDetails: [] };
             state.loading = false;
         },
+        CART_CLEAR: (state) => {
+            state.cart = { listBillDetails: [] };
+            state.totalPrice = 0;
+        },
     },
-   
 });
 
 export const {
@@ -52,6 +55,7 @@ export const {
     CART_UPDATING_SUCCESS,
     CART_ADDING_INFORMATION,
     CART_PAYING_SUCCESS,
+    CART_CLEAR,
 } = cartSlice.actions;
 
 export const selectCart = (state) => state.cart;

@@ -12,8 +12,25 @@ import {
 import { selectUser } from "../../features/user/userSlice";
 import { getErrorMessageFromServer } from "../../utils/serverUtils";
 import { OrderCard } from "./OrderCard";
+import { Footer } from "../../components/Footer/Footer";
+import { Box } from "@mui/material";
+import { useState } from "react";
+
+const ButtonOrder = ({ type, children, step, setStep }) => {
+    return (
+        <button
+            className={`w-full border-r py-4 border-b-2 hover:text-regal-blue ${
+                step === type ? "border-b-regal-blue text-regal-blue" : ""
+            }`}
+            onClick={() => setStep(type)}
+        >
+            {children}
+        </button>
+    );
+};
 
 export const Order = () => {
+    const [step, setStep] = useState("All");
     const user = useSelector(selectUser);
     const order = useSelector(selectOrder);
     const dispatch = useDispatch();
@@ -24,7 +41,6 @@ export const Order = () => {
             try {
                 dispatch(ORDER_LOADING());
                 const response = await billApi.getOrder(user.userInfor.id);
-                console.log(response);
                 dispatch(ORDER_LOADING_SUCCESS(response));
             } catch (error) {
                 const errorMessage = getErrorMessageFromServer(error);
@@ -32,15 +48,43 @@ export const Order = () => {
             }
         };
         if (user.token) FetchOrder();
-        else navigate("/sign-in");
+        else navigate("/sign-in", { state: { alertNotLogin: true } });
     }, [user]);
 
+    let orders = [];
+    if (order.data !== null) {
+        if (step === "All") orders = [...order.data];
+
+        if (step === "Processing")
+            orders = [...order.data].filter((ord) => ord.status === 2);
+
+        if (step === "Complete")
+            orders = [...order.data].filter((ord) => ord.status === 3);
+
+        if (step === "Cancel")
+            orders = [...order.data].filter((ord) => ord.status === 4);
+    }
+
     return (
-        <>
+        <div className="bg-gray-200 min-h-[100vh] pt-28">
+            <Box className="mx-44 bg-white flex justify-around text-xl">
+                <ButtonOrder type="All" step={step} setStep={setStep}>
+                    Tất cả
+                </ButtonOrder>
+                <ButtonOrder type="Processing" step={step} setStep={setStep}>
+                    Đang giao
+                </ButtonOrder>
+                <ButtonOrder type="Complete" step={step} setStep={setStep}>
+                    Đã hoàn thành
+                </ButtonOrder>
+                <ButtonOrder type="Cancel" step={step} setStep={setStep}>
+                    Đã hủy
+                </ButtonOrder>
+            </Box>
             {order.loading ? (
                 <Loading />
-            ) : order.data === null ? (
-                <div className="text-2xl font-medium flex justify-center items-center flex-col h-screen">
+            ) : orders.length === 0 ? (
+                <div className="text-2xl font-medium flex justify-center items-center flex-col min-h-[85vh] bg-white mx-44 my-9">
                     <div
                         style={{
                             backgroundImage:
@@ -55,15 +99,30 @@ export const Order = () => {
                     <div className="mt-4">Bạn không có đơn hàng nào</div>
                 </div>
             ) : (
-                <div className="p-20 bg-gray-100">
-                    <div className="text-center text-4xl font-bold mt-10">
-                        Đơn hàng đã mua
-                    </div>
-                    {order.data.map((card) => (
-                        <OrderCard card={card} />
+                <div className="px-44 min-h-[66.9vh]">
+                    {orders.map((card, index) => (
+                        <OrderCard card={card} key={index} />
                     ))}
+                    {/* {order.data.map((card, index) =>
+                        step === "All" ? (
+                            <OrderCard card={card} key={index} />
+                        ) : step === "Processing" ? (
+                            card.status === 2 && (
+                                <OrderCard card={card} key={index} />
+                            )
+                        ) : step === "Complete" ? (
+                            card.status === 3 && (
+                                <OrderCard card={card} key={index} />
+                            )
+                        ) : step === "Cancel" ? (
+                            card.status === 4 && (
+                                <OrderCard card={card} key={index} />
+                            )
+                        ) : null
+                    )} */}
                 </div>
             )}
-        </>
+            <Footer />
+        </div>
     );
 };

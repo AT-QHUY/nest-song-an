@@ -7,6 +7,7 @@ export const productApi = {
 
     getProductByPage: async (offset, limit) => {
         try {
+           
             const res = await adminAxios.get(
                 `/product/page?page=${offset}&limit=${limit}`
             );
@@ -16,7 +17,7 @@ export const productApi = {
         }
     },
 
-    getAllProductByPage: async(offset, limit) => {
+    getAllProductByPage: async (offset, limit) => {
         try {
             const res = await adminAxios.get(
                 `/product/page/all?page=${offset}&limit=${limit}`
@@ -27,12 +28,12 @@ export const productApi = {
         }
     },
 
-    getCountAllProduct: async() => {
-        try{
+    getCountAllProduct: async () => {
+        try {
             const res = await adminAxios.get(`/product/count/all`);
-            return res
-        }catch(err){
-            throw err
+            return res;
+        } catch (err) {
+            throw err;
         }
     },
 
@@ -47,53 +48,58 @@ export const productApi = {
         return adminAxios.post("/product/filter", data);
     },
 
+    getProductByStatus: (data) => {
+        return adminAxios.post("/product/status", data);
+    },
+
     // Add new product
 
-    addProductAPI: async(data) => {
+    addProductAPI: async (data) => {
         try {
-            const res = await adminAxios.put("/product/add",data)
-            return res
+            const res = await adminAxios.post("/product/add", data);
+            return res;
         } catch (error) {
-            throw error
+            throw error;
         }
     },
 
-    // Update product 
-    updateProductById: async(proiId, proName, proDesc, proPrice ) => {
-     
-        try{
-            const data = { name:proName, description:proDesc, basePrice:proPrice}
-            const res = await adminAxios.put(`/product/${proiId}`, data)
-            return res
-        }catch(err){
-            throw err
+    // Update product
+    updateProductById: async (proId, proData) => {
+        try {
+            const res = await adminAxios.put(`/product/${proId}`, proData);
+            return res;
+        } catch (err) {
+            throw err;
         }
     },
     //-------------------------
 
     //update product status
 
-    updateProductStatus: async(proiId, status ) => {
-        try{
-            const data = { status:status}
-            const res = await adminAxios.put(`/product/reactive/${proiId}`, data)
-            return res
-        }catch(err){
-            throw err
+    updateProductStatus: async (proiId, status) => {
+        try {
+            const data = { status: status };
+            const res = await adminAxios.put(
+                `/product/status/${proiId}`,
+                data
+            );
+            return res;
+        } catch (err) {
+            throw err;
         }
     },
 
     //-------------------------
     //  delete product
 
-    deleteProductById: async(proiId) => {
-        try{                  
-            const res = await adminAxios.delete(`/product/${proiId}`)
-            return res
-        }catch(err){
-            throw err
+    deleteProductById: async (proiId) => {
+        try {
+            const res = await adminAxios.delete(`/product/${proiId}`);
+            return res;
+        } catch (err) {
+            throw err;
         }
-    }
+    },
 
     //-------------------------
 };

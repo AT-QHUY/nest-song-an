@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import { productApi } from "../../api/productApi";
+import { Footer } from "../../components/Footer/Footer";
 import { Filter } from "../../components/Production/Filter";
 import { List } from "../../components/Production/List";
 import { getErrorMessageFromServer } from "../../utils/serverUtils";
@@ -35,7 +36,7 @@ export const Production = () => {
                                 <div>
                                     <div className="dropdown relative">
                                         <button
-                                            className="border dropdown-toggle px-5 py-2 font-medium text-xs leading-tight rounded-full shadow-md transition duration-150 ease-in-out flex items-center whitespace-nowrap"
+                                            className="border dropdown-toggle px-6 py-2.5 font-medium text-sm leading-tight rounded-full shadow-md transition duration-150 ease-in-out flex items-center whitespace-nowrap"
                                             type="button"
                                             id="dropdownMenuButton1"
                                             data-bs-toggle="dropdown"
@@ -65,7 +66,7 @@ export const Production = () => {
                                             {cateList.map((cate) => (
                                                 <li key={cate.id}>
                                                     <div
-                                                        className="cursor-pointer dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
+                                                        className="cursor-pointer dropdown-item text-base py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
                                                         onClick={() =>
                                                             setCategory(cate)
                                                         }
@@ -76,15 +77,15 @@ export const Production = () => {
                                             ))}
                                             <li key={0}>
                                                 <div
-                                                    className="cursor-pointer dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
+                                                    className="cursor-pointer dropdown-item text-base py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
                                                     onClick={() =>
                                                         setCategory({
                                                             id: 0,
-                                                            name: "Phân loại",
+                                                            name: "Tất cả",
                                                         })
                                                     }
                                                 >
-                                                    Phân loại
+                                                    Tất cả
                                                 </div>
                                             </li>
                                         </ul>
@@ -96,6 +97,7 @@ export const Production = () => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

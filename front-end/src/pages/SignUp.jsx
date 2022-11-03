@@ -38,6 +38,8 @@ export const SignUp = () => {
         if (user.token) navigate("/");
     }, [user.token]);
 
+    useEffect(() => window.scroll(0, 0), []);
+
     return (
         <section className="h-screen">
             <div

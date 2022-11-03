@@ -19,7 +19,9 @@ export const Sale = () => {
         const fetchProduct = async () => {
             try {
                 dispatch(PRODUCT_LOADING_REQUEST());
-                const response = await productApi.getAllProduct();
+                const response = await productApi.getProductByStatus({
+                    status: 1,
+                });
                 localStorage.setItem("products", response);
                 dispatch(PRODUCT_LOADING_BY_PAGE_SUCCESS(response));
             } catch (error) {

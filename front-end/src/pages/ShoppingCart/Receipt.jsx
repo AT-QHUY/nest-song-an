@@ -7,7 +7,7 @@ export const Receipt = () => {
                 Cảm ơn bạn đã đặt hàng^^
             </div>
             <div className="text-center px-32">
-                Đơn hàng của bạn sẽ được giao trong vòng 30 ngày. Mọi chi tiết,
+                Đơn hàng của bạn sẽ được giao trong vòng 7 ngày. Mọi chi tiết,
                 thắc mắc của khách hàng có thể liên hệ với chúng tôi thông qua
                 phần liên hệ bên dưới cùng của website{" "}
                 <span className="underline font-medium text-cyan-400 cursor-pointer">

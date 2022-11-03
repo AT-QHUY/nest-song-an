@@ -9,8 +9,19 @@ export const billApi = {
     getOrder: (userId) => {
         return adminAxios.get(`bill/customer-id/${userId}`);
     },
+    getOrderByPage: (offset, limit) => {
+        return adminAxios.get(`/bill/page?page=${offset}&limit=${limit}`);
+    },
+    getBillByBillId: (bill_id) => {
+        return adminAxios.get(`/bill/${bill_id}`);
+    },
+    getBillStatus: () =>{
+        return adminAxios.get("/bill_status")
+    },
+    getBillByStatus: (status) => {
+        return adminAxios.get(`/bill/status/${status}`)
+    },
     payment: (data) => {
-        console.log(data);
         return adminAxios.post("/cart/buy/customer", data);
     },
     addToCart: (userId, product, quantity) => {

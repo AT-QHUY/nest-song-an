@@ -23,10 +23,20 @@ import {
 } from "../../utils/serverUtils";
 import { billApi } from "../../api/billApi";
 import { selectUser } from "../../features/user/userSlice";
-import { Alert, Slide } from "@mui/material";
-import { theme } from "../../assets/theme";
+import {
+    Alert,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Slide,
+} from "@mui/material";
 import { faCartPlus, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Footer } from "../../components/Footer/Footer";
 
 export const ProductDetail = () => {
     const dispatch = useDispatch();
@@ -39,6 +49,7 @@ export const ProductDetail = () => {
     const navigate = useNavigate();
     const [productImage, setProductImage] = useState("");
     const [alert, setAlert] = useState(false);
+    const [alertCart, setAlertCart] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -56,35 +67,62 @@ export const ProductDetail = () => {
     }, [productId.id]);
 
     const handleAddToCart = async () => {
-        try {
-            dispatch(CART_LOADING_REQUEST());
-            const response = await billApi.addToCart(
-                user.userInfor.id,
-                product,
-                productAmount
-            );
-            localStorage.setItem("cart", response);
+        if (user.token)
+            try {
+                dispatch(CART_LOADING_REQUEST());
+                const response = await billApi.addToCart(
+                    user.userInfor.id,
+                    product,
+                    productAmount
+                );
+                localStorage.setItem("cart", response);
 
-            dispatch(CART_ADDING_SUCCESS(response));
-            setAlert(true);
-            setTimeout(() => {
-                setAlert(false);
-            }, 2000);
-        } catch (error) {
-            const errorMessage = getErrorMessageFromServer(error);
-            dispatch(CART_LOADING_FAIL(errorMessage));
-        }
+                dispatch(CART_ADDING_SUCCESS(response));
+                setAlert(true);
+                setTimeout(() => {
+                    setAlert(false);
+                }, 2000);
+            } catch (error) {
+                const errorMessage = getErrorMessageFromServer(error);
+                dispatch(CART_LOADING_FAIL(errorMessage));
+            }
+        else setAlertCart(true);
     };
 
     return (
         <>
-            {products.loading || cart.loading ? (
+            {alertCart && (
+                <Dialog open={alertCart} onClose={() => setAlertCart(false)}>
+                    <DialogTitle id="alert-dialog-title">
+                        {"BẠN CHƯA ĐĂNG NHẬP"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Bạn phải đăng nhập để có thể mua hàng
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() =>
+                                setAlertCart(false, navigate("/sign-in"))
+                            }
+                            autoFocus
+                        >
+                            Đăng nhập
+                        </Button>
+                        <Button onClick={() => setAlertCart(false)}>
+                            Đóng
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            )}
+            {products.loading ? (
                 <Loading />
             ) : products.productErrorMessage === 404 ? (
                 navigate("*")
             ) : (
-                <div className="bg-gray-100 absolute h-auto">
-                    <div className="flex bg-white p-10 m-20 mb-6 relative">
+                <div className="bg-gray-100 p-24 h-auto">
+                    <div className="flex bg-white p-20 relative">
                         <Slide direction="up" in={alert}>
                             <Alert
                                 severity="success"
@@ -102,7 +140,7 @@ export const ProductDetail = () => {
                             <img
                                 src={productImage}
                                 alt={product.name}
-                                className="w-full h-[28rem] shadow-lg shadow-gray-400"
+                                className="w-full h-[32rem] shadow-lg shadow-gray-400"
                             />
                             <div className="flex justify-center gap-4 mt-4">
                                 {Object.keys(product).length === 0
@@ -201,14 +239,28 @@ export const ProductDetail = () => {
                                         </button>
                                     </div>
                                     <button
-                                        className="p-4 px-5 rounded-full bg-regal-blue text-white ml-14 text-xs uppercase font-medium hover:bg-regal-blue/80 flex items-center gap-2"
+                                        className="p-4 px-5 rounded-full bg-regal-blue text-white ml-14 text-xs uppercase font-medium hover:bg-regal-blue/80 flex items-center gap-2 relative disabled:bg-slate-200 disabled:text-gray-400"
                                         onClick={handleAddToCart}
+                                        disabled={cart.loading}
                                     >
                                         <FontAwesomeIcon
                                             icon={faCartPlus}
                                             className="w-5 h-5"
                                         />{" "}
                                         Thêm vào giỏ hàng
+                                        {cart.loading && (
+                                            <CircularProgress
+                                                size={28}
+                                                sx={{
+                                                    color: "#00ADB5",
+                                                    position: "absolute",
+                                                    top: "50%",
+                                                    left: "50%",
+                                                    marginTop: "-12px",
+                                                    marginLeft: "-12px",
+                                                }}
+                                            />
+                                        )}
                                     </button>
                                 </div>
                             </div>
@@ -216,6 +268,7 @@ export const ProductDetail = () => {
                     </div>
                 </div>
             )}
+            <Footer />
         </>
     );
 };

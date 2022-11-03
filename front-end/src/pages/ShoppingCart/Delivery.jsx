@@ -29,7 +29,7 @@ export const Delivery = ({ setStep, firstRender }) => {
         } else setUserInfo(cart.shipInfor);
     }, []);
 
-    const handleSubmit = () => {
+    useEffect(() => {
         dispatch(
             CART_ADDING_INFORMATION({
                 id: userInfo.id,
@@ -37,7 +37,7 @@ export const Delivery = ({ setStep, firstRender }) => {
                 phoneNumber: userInfo.phoneNumber,
             })
         );
-    };
+    }, [userInfo]);
 
     return (
         <div className="mt-10 w-9/12 m-auto">
@@ -83,7 +83,6 @@ export const Delivery = ({ setStep, firstRender }) => {
                 <button
                     className="bg-regal-blue rounded-3xl w-60 h-12 text-white shadow-md"
                     onClick={() => {
-                        handleSubmit();
                         setStep("payment");
                     }}
                 >

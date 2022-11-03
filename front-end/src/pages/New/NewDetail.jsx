@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { newApi } from "../../api/newApi";
+import { Footer } from "../../components/Footer/Footer";
 import { Loading } from "../../components/Loading/Loading";
 import {
     NEWS_LOADING_FAIL,
@@ -128,6 +129,7 @@ export const NewDetail = () => {
                     </div>
                 </>
             )}
+            <Footer />
         </>
     );
 };

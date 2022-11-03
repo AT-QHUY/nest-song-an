@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import UserIcon from "../../assets/icons/user.png";
+import { CART_CLEAR } from "../../features/cart/cartSlice";
 import { ORDER_CLEAR } from "../../features/order/orderSlice";
 import {
     selectUser,
@@ -26,6 +27,7 @@ const UserDropDown = () => {
         await delay(500);
         dispatch(ORDER_CLEAR());
         dispatch(USER_LOGOUT_SUCCESS());
+        dispatch(CART_CLEAR());
         setLogoutSuccess(true);
         setTimeout(() => setLogoutSuccess(false), 2000);
     };

@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { selectUser } from "../../features/user/userSlice";
 import UserDropDown from "../UserDropDown/UserDropDown";
 import { HeaderBottom } from "./HeaderBottom";
@@ -14,12 +14,22 @@ import {
 import { Badge } from "@mui/material";
 import { billApi } from "../../api/billApi";
 import { getErrorMessageFromServer } from "../../utils/serverUtils";
+import { useForm } from "react-hook-form";
+import {
+    FILTER_ADD_SEARCH,
+    FILTER_CLEAR_SEARCH,
+} from "../../features/production/filterSlice";
 
 const Header = () => {
     const cart = useSelector(selectCart);
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
+    const searchTimeoutRef = useRef();
+    const [search, setSearch] = useState("");
+    const { register, handleSubmit } = useForm();
+    const navigate = useNavigate();
 
+    // state yen
     useEffect(() => {
         const fetchCart = async () => {
             try {
@@ -34,6 +44,20 @@ const Header = () => {
         };
         fetchCart();
     }, [user.token]);
+
+    useEffect(() => {
+        if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+
+        searchTimeoutRef.current = setTimeout(() => {
+            // console.log(search);
+        }, 600);
+    }, [search]);
+
+    const onSubmit = () => {
+        dispatch(FILTER_ADD_SEARCH(search));
+        setSearch("");
+        navigate(`/production`);
+    };
 
     return (
         <div className="fixed w-full z-10">
@@ -52,8 +76,11 @@ const Header = () => {
                 </Link>
                 <HeaderBottom />
                 <div className="flex my-2">
-                    <form className="md:w-96 w-36 my-auto mx-3">
-                        <div className="relative">
+                    <div className="md:w-96 w-36 my-auto mx-3">
+                        <form
+                            className="relative"
+                            onSubmit={handleSubmit(onSubmit)}
+                        >
                             <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                                 <svg
                                     aria-hidden="true"
@@ -76,10 +103,11 @@ const Header = () => {
                                 className="border-2 focus:outline-none block p-3 pl-12 w-full text-sm text-gray-900 bg-gray-50 rounded-xl dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Tìm kiếm sản phẩm"
                                 maxLength={150}
-                                required
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                             />
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
                 <div className="md:mr-[7%] flex items-center relative">
                     <UserDropDown />

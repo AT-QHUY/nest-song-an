@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { newApi } from "../../api/newApi";
+import { Footer } from "../../components/Footer/Footer";
 import { Loading } from "../../components/Loading/Loading";
 import {
     NEWS_LOADING_ALL_SUCCESS,
@@ -37,7 +38,7 @@ export const New = () => {
                 <Loading />
             ) : (
                 <div className="pt-16">
-                    <div className="p-16 px-32">
+                    <div className="p-20 px-32 min-h-[85vh]">
                         <h1 className="font-semibold md:text-3xl text-md md:mb-16 mb-5">
                             Tin tức
                         </h1>
@@ -72,6 +73,7 @@ export const New = () => {
                     </div>
                 </div>
             )}
+            <Footer />
         </>
     );
 };
