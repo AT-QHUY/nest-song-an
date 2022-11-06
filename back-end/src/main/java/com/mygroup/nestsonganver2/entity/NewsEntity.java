@@ -15,6 +15,7 @@ public class NewsEntity {
     private String shortDescription;
     private String title;
     private int empId;
+    private int cateId;
 
     public NewsEntity() {
     }
@@ -34,6 +35,23 @@ public class NewsEntity {
         this.empId = empId;
     }
 
+    public NewsEntity(int id, String description, String shortDescription, String title, int empId, int cateId) {
+        this.id = id;
+        this.description = description;
+        this.shortDescription = shortDescription;
+        this.title = title;
+        this.empId = empId;
+        this.cateId = cateId;
+    }
+
+    public int getCateId() {
+        return cateId;
+    }
+
+    public void setCateId(int cateId) {
+        this.cateId = cateId;
+    }
+    
     
     
     public int getId() {

@@ -42,6 +42,7 @@ public class UserConverter {
         dto.setAddress(entity.getAddress());
         dto.setPassword(entity.getPassword());
         dto.setRole(roleDao.getRoleById(entity.getRoleId()));
+        dto.setStatus(entity.getStatus());
         return dto;
     }
 

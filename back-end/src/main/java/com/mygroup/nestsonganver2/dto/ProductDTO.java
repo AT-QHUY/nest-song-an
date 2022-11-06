@@ -22,8 +22,15 @@ public class ProductDTO {
     private int cateId;
     private int status;
     private String image;
+    
+    //value for dashboard
+    
+    private int total;
 
     private List<ImageDTO> listImages = new ArrayList<>();
+    
+     private List<String> listStringImages = new ArrayList<>();
+
 
     public ProductDTO() {
     }
@@ -119,4 +126,22 @@ public class ProductDTO {
         this.listImages = listImages;
     }
 
+    public List<String> getListStringImages() {
+        return listStringImages;
+    }
+
+    public void setListStringImages(List<String> listStringImages) {
+        this.listStringImages = listStringImages;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    
+    
 }

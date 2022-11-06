@@ -6,6 +6,7 @@
 package com.mygroup.nestsonganver2.dao.impl;
 
 import com.mygroup.nestsonganver2.dao.IDao;
+import com.mygroup.nestsonganver2.entity.UserEntity;
 import com.mygroup.nestsonganver2.mapper.RowMapper;
 import com.mygroup.nestsonganver2.utils.Utils;
 import java.sql.Connection;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  *
@@ -197,7 +199,43 @@ public class AbstractDAO<T> implements IDao<T> {
         }
     }
 
+    public <T> List<T> query(String sql, Function <ResultSet, T> func, Object... parameters) {
+        List<T> results = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = Utils.makeConnection();
+            connection.setAutoCommit(false);
+            statement = connection.prepareStatement(sql);
+            setParameter(statement, parameters);
+            resultSet = statement.executeQuery();
+            connection.commit();
+            connection.setAutoCommit(true);
+            while (resultSet.next()) {
+                results.add((T) func.apply(resultSet));
+            }
+            return results;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                return null;
+            }
+        }
     
-
+    }
+    
 }
 

@@ -21,16 +21,16 @@ public class ProductSQL {
             + "order by id\n"
             + "offset ? row\n"
             + "fetch next ? rows only";
-    
+
     //count all product
     public static String countAllProduct = "select count(id) as total\n"
             + "from dbo.Products\n";
-            
+
     //count by status
     public static String countProductByStatus = "select count(id) as total\n"
             + "from dbo.Products\n"
             + "where status = ?";
-    
+
     //search product by name *
     public static String searchProductByName = "select * from dbo.Products\n"
             + "where lower(name) like lower(?) and status=1";
@@ -54,7 +54,7 @@ public class ProductSQL {
             + "where id=?";
 
     //show all product *
-    public static String showAll = "select * from dbo.Products";
+    public static String showAll = "select * from dbo.Products where status = 1";
 
     public static String setProductStatus = "update dbo.Products\n"
             + "set status=?\n"
@@ -69,4 +69,10 @@ public class ProductSQL {
     public static String SubstractQuantity = "update* from dbo.Products\n"
             + "set status = ?"
             + "where id = ?";
+
+    // calculate static value 
+    public static String totalProductOnBill = "select bd.productId, sum(bd.quantity) as total, p.name \n"
+                                            + "from BillDetails bd inner join Products p\n"
+                                            + "on bd.productId = p.id\n"
+                                            + "group by bd.productId , p.name";
 }

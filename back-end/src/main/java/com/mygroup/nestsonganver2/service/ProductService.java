@@ -22,7 +22,7 @@ public class ProductService {
     private static final ProductDAO productDAO = ProductDAO.getInstance();
 
     private static final ProductConverter productConverter = ProductConverter.getInstance();
-    
+
     private static final ImageService imageService = ImageService.getImageService();
 
     private static ProductService productService;
@@ -42,7 +42,7 @@ public class ProductService {
         }
         return productConverter.convertEntitytoDTO(entityList);
     }
-    
+
     // get product by status
     public List<ProductDTO> getByStatus(int status) {
         List<ProductEntity> entityList = productDAO.getByStatus(status);
@@ -63,12 +63,14 @@ public class ProductService {
 
     //add a new product
     public int addNewProduct(ProductDTO product) throws NoSuchAlgorithmException {
-        int result = productDAO.addNewProduct(ProductConverter.convertDTOtoEntity(product));
-        if(result != 0) {
+        final int result = productDAO.addNewProduct(ProductConverter.convertDTOtoEntity(product));
+        if (result != 0) {
             ImageDTO imgDTO = new ImageDTO();
-            imgDTO.setImgPath(product.getImage());
-            imgDTO.setProductId(result);
-            result = imageService.addImage(imgDTO);
+            product.getListStringImages().forEach(imageItem -> {
+                imgDTO.setImgPath(imageItem);
+                imgDTO.setProductId(result);
+                imageService.addImage(imgDTO);
+            });
         }
         return result;
     }
@@ -96,21 +98,27 @@ public class ProductService {
         return productDAO.updateProduct(ProductConverter.convertDTOtoEntity(checkBeforeUpdate(product)));
         //Add roleID for user
     }
-    
-    private ProductDTO checkBeforeUpdate(ProductDTO product){
-        ProductDTO oldProductDTO= getProductById(product.getId());
-        if (product.getName()==null)
+
+    private ProductDTO checkBeforeUpdate(ProductDTO product) {
+        ProductDTO oldProductDTO = getProductById(product.getId());
+        if (product.getName() == null) {
             product.setName(oldProductDTO.getName());
-        if (product.getQuantity()==0)
+        }
+        if (product.getQuantity() == 0) {
             product.setQuantity(oldProductDTO.getQuantity());
-        if (product.getDeal()==0)
+        }
+        if (product.getDeal() == 0) {
             product.setDeal(oldProductDTO.getDeal());
-        if (product.getDescription()==null)
+        }
+        if (product.getDescription() == null) {
             product.setDescription(oldProductDTO.getDescription());
-        if (product.getBasePrice()==0)
+        }
+        if (product.getBasePrice() == 0) {
             product.setBasePrice(oldProductDTO.getBasePrice());
-        if (product.getCateId()==0)
+        }
+        if (product.getCateId() == 0) {
             product.setCateId(oldProductDTO.getCateId());
+        }
         return product;
     }
 
@@ -121,10 +129,11 @@ public class ProductService {
     //use filter
     public List<ProductDTO> filter(Filter filter) {
         List<ProductEntity> entityList;
-        if (filter.getName()==null && filter.getLowPrice()==0 && filter.getHighPrice()==0 && filter.getDeal()==0 &&filter.getDeal()==0)
-            entityList = productDAO.showAll(); 
-        else 
+        if (filter.getName() == null && filter.getLowPrice() == 0 && filter.getHighPrice() == 0 && filter.getDeal() == 0 && filter.getDeal() == 0) {
+            entityList = productDAO.showAll();
+        } else {
             entityList = productDAO.filter(filter);
+        }
         if (entityList == null) {
             return null;
         }
@@ -139,7 +148,7 @@ public class ProductService {
         }
         return productConverter.convertEntitytoDTO(entityList);
     }
-    
+
     //get all by gages
     public List<ProductDTO> getAllByPages(int page, int limit) {
         List<ProductEntity> entityList = productDAO.getAllByPages(page, limit);
@@ -148,15 +157,26 @@ public class ProductService {
         }
         return productConverter.convertEntitytoDTO(entityList);
     }
-    
+
     //get all count product 
-    public int countAllProduct(){
-        try{
+    public int countAllProduct() {
+        try {
             int count = productDAO.countAllProduct();
-        return count;
-        }catch(Exception e){
+            return count;
+        } catch (Exception e) {
             System.out.println(e);
             return 0;
+        }
+    }
+    
+    //calculate static value
+    
+    public List<ProductDTO> getCountOnBill() {
+         try {
+            return productDAO.getStaticValue();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
         }
     }
 

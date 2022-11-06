@@ -25,6 +25,13 @@ public class UserSQL {
     public static String findById = "select * from Users where id = ? and status = 1";   
     public static String login = "select * from Users where username = ? and password = ? and status = 1";
     public static String findByUsername = "select * from Users where username = ?";
+     public static String findByPage = "select * from dbo.Users\n"
+            + "order by id\n"
+            + "offset ? row\n"
+            + "fetch next ? rows only";
+     //count all user
+    public static String countAllUser = "select count(id) as total\n"
+            + "from dbo.Users\n";
     
     // ------------------------------------------------------------------------
     

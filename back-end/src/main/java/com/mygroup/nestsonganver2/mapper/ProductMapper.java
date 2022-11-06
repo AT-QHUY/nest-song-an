@@ -4,9 +4,11 @@
  */
 package com.mygroup.nestsonganver2.mapper;
 
+import com.mygroup.nestsonganver2.dto.ProductDTO;
 import com.mygroup.nestsonganver2.entity.ProductEntity;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +43,33 @@ public class ProductMapper implements RowMapper<ProductEntity>{
             Logger.getLogger(ProductMapper.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-       
     }
+    
+//    public int getInt(int i){
+//        return i;
+//    }
+//    
+//    Function<int, int> getInt = (i) ->
+//    { i++
+//            return i;
+//    }
+//    
+//    public ProductDTO mapRowWithTotalOnBill (ResultSet rs){
+//        return new ProductDTO();
+//    }
+    
+    public Function<ResultSet, ProductDTO> mapRowWithTotalOnBill = rs -> {
+        try {
+            ProductDTO product = new ProductDTO();
+            product.setId(rs.getInt("productId"));
+            product.setTotal(rs.getInt("total"));
+            product.setName(rs.getString("name"));
+            return product;
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductMapper.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    };
+    
+    
 }

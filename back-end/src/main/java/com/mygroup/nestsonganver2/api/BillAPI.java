@@ -66,7 +66,7 @@ public class BillAPI {
     @Path("/status/{status}")
     public Response getBillByStatus(@PathParam("status") int status) {
         List<BillDTO> list = BILLS_SERVICE.getBillByStatus(status);
-        if (list.isEmpty()) {
+        if (list.isEmpty()) {  
             return Response.notModified().build();
         } else {
             return Response.ok(list, MediaType.APPLICATION_JSON).build();

@@ -22,6 +22,7 @@ public class NewsMapper implements RowMapper<NewsEntity>{
                                ,rs.getString("title")
                                ,rs.getString("shortDescription")
                                ,rs.getInt("empId")
+                               , rs.getInt("cateId")
             );
         } catch (Exception ex) {
             System.out.println(ex);

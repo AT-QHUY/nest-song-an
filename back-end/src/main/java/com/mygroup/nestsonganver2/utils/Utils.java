@@ -34,8 +34,12 @@ public class Utils {
         Connection conn = null;
         try {
             String dbURL = "jdbc:sqlserver://nestsongan.cqtchuhryqsc.ap-southeast-1.rds.amazonaws.com;databaseName=NestSongAn";
+//            String dbURL = "jdbc:sqlserver://nest-song-an.mssql.somee.com;databaseName=nest-song-an";
+
             String user = "admin";
             String pass = "thisisadmin";
+//            String user = "ttiendat_SQLLogin_1";
+//            String pass = "dmm1pmktuj";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             conn = DriverManager.getConnection(dbURL, user, pass);
             //System.out.println("Connect to DB successfully");

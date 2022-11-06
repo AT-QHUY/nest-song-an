@@ -21,50 +21,52 @@ import java.util.List;
 public class CartService {
 
     private BillService billService = BillService.getInstance();
-    private BillDetailsService billDetailsService = BillDetailsService.getInstance(); 
+    private BillDetailsService billDetailsService = BillDetailsService.getInstance();
     private ProductService productService = ProductService.getInstance();
     private BillDTO bill;
     private List<BillDetailsDTO> CartLineItems;
     private static CartService instance;
-    
+
     public static CartService gettCartSerivce() {
-        if (instance == null)
+        if (instance == null) {
             instance = new CartService();
+        }
         return instance;
     }
- 
+
     private CartService() {
     }
-    
+
     private void setCartBill(int userId) {
-        if (this.bill == null) {
-            List<BillDTO> cartBill  = billService.getBillByCUstomerIdAndStatus(userId ,1);
-            if (!cartBill.isEmpty()) 
-                this.bill = cartBill.get(0);
-            else {
-                BillDTO newBill = new BillDTO();
-                newBill.setCustomerId(userId);
-                newBill.setStatus(1);
-                newBill.setEmpId(1);
-                newBill.setDate(Date.valueOf(LocalDate.now()));
-                billService.insertNewCart(newBill);
-                cartBill  = billService.getBillByCUstomerIdAndStatus(userId, 1);
-                if (!cartBill.isEmpty())
+//        if (this.bill == null) {
+        List<BillDTO> cartBill = billService.getBillByCUstomerIdAndStatus(userId, 1);
+        if (!cartBill.isEmpty()) {
+            this.bill = cartBill.get(0);
+        } else {
+            BillDTO newBill = new BillDTO();
+            newBill.setCustomerId(userId);
+            newBill.setStatus(1);
+            newBill.setEmpId(1);
+            newBill.setDate(Date.valueOf(LocalDate.now()));
+            billService.insertNewCart(newBill);
+            cartBill = billService.getBillByCUstomerIdAndStatus(userId, 1);
+            if (!cartBill.isEmpty()) {
                 this.bill = cartBill.get(0);
             }
         }
+//        }
     }
-    
+
     private float calTotalPrice() {
         float total = 0;
-        for (BillDetailsDTO bdDTO : this.CartLineItems){
+        for (BillDetailsDTO bdDTO : this.CartLineItems) {
             total += bdDTO.getPrice();
         }
         return total;
     }
-    
+
     public BillDTO buy(UserDTO user) {
-        setCartBill(user.getId()); 
+        setCartBill(user.getId());
         setCartLineItems(this.bill.getId());
         this.bill.setDate(Date.valueOf(LocalDate.now()));
         this.bill.setAddress(user.getAddress());
@@ -80,28 +82,33 @@ public class CartService {
             return result;
         }
         return null;
-    }   
-    
-    private void setCartLineItems(int billID) {
-        if (this.CartLineItems == null) {
-            List<BillDetailsDTO> newCartLineItem = billDetailsService.findByBillId(billID);
-            if (newCartLineItem != null) this.CartLineItems = newCartLineItem;
-            else this.CartLineItems = new ArrayList<>();
-        }
     }
-    private void resetCartLineItems (int billID) {
+
+    private void setCartLineItems(int billID) {
+//        if (this.CartLineItems == null) {
+        List<BillDetailsDTO> newCartLineItem = billDetailsService.findByBillId(billID);
+        if (newCartLineItem != null) {
+            this.CartLineItems = newCartLineItem;
+        } else {
+            this.CartLineItems = new ArrayList<>();
+        }
+//        }
+    }
+
+    private void resetCartLineItems(int billID) {
         this.CartLineItems = billDetailsService.findByBillId(billID);
     }
+
     private float calculateTotalMoney(int quantity, float deal, float basePrice) {
         return quantity * basePrice - quantity * basePrice * deal;
     }
-    
+
     public List<BillDetailsDTO> getCartLineItems(int customerId) {
         setCartBill(customerId);
         setCartLineItems(this.bill.getId());
         return this.CartLineItems;
     }
-    
+
     public List<BillDetailsDTO> addToCart(BillDetailsDTO bd, int userId) {
         setCartBill(userId);
         setCartLineItems(this.bill.getId());
@@ -115,7 +122,7 @@ public class CartService {
                 this.bill.setTotalPrice(calTotalPrice());
                 return this.CartLineItems;
             }
-        } 
+        }
         bd.setBillId(this.bill.getId());
         billDetailsService.insertNewBillDetails(bd);
         this.CartLineItems.add(bd);
@@ -123,26 +130,28 @@ public class CartService {
         this.bill.setTotalPrice(calTotalPrice());
         return this.CartLineItems;
     }
-    
+
     // -1: update fail ; 0: not find billdetail; 1: update successfully
     public int updateQuantity(int bdId, int quantity, int billId, int userId) {
         setCartBill(userId);
         resetCartLineItems(billId);
         BillDetailsDTO bd = billDetailsService.findById(bdId);
         if (billId == this.bill.getId()) {
-            if (bd == null) return 0;
+            if (bd == null) {
+                return 0;
+            }
             bd.setQuantity(quantity);
-            float price = quantity * bd.getProduct().getBasePrice() - quantity * bd.getProduct().getBasePrice() * bd.getProduct().getDeal() ;
+            float price = quantity * bd.getProduct().getBasePrice() - quantity * bd.getProduct().getBasePrice() * bd.getProduct().getDeal();
             bd.setPrice(price);
             if (billDetailsService.updateBillDetails(bdId, bd) > 0) {
                 for (BillDetailsDTO item : this.CartLineItems) {
                     if (item.getId() == bd.getId()) {
                         item.setQuantity(bd.getQuantity());
-                        item.setPrice(bd.getPrice()) ;
-                    } 
+                        item.setPrice(bd.getPrice());
+                    }
                 }
                 return 1;
-            }   
+            }
         }
         return -1;
     }
@@ -152,10 +161,11 @@ public class CartService {
         setCartBill(userId);
         setCartLineItems(bill.getId());
         BillDetailsDTO deleteBD = billDetailsService.findById(bdId);
-        if (deleteBD == null) return 0;
-        if (deleteBD.getBillId() == bill.getId())
-        {
-            if (billDetailsService.deleteBillDetails(deleteBD) > 0){
+        if (deleteBD == null) {
+            return 0;
+        }
+        if (deleteBD.getBillId() == bill.getId()) {
+            if (billDetailsService.deleteBillDetails(deleteBD) > 0) {
                 Iterator<BillDetailsDTO> iter = this.CartLineItems.iterator();
                 while (iter.hasNext()) {
                     BillDetailsDTO del = iter.next();
@@ -165,8 +175,9 @@ public class CartService {
                     }
                 }
                 return 1;
+            } else {
+                return -1;
             }
-            else return -1;
         }
         return 0;
     }

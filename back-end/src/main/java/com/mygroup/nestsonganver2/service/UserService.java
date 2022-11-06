@@ -21,11 +21,11 @@ import java.util.List;
  * @author huy
  */
 public class UserService {
-    
-    private  RoleDAO roleDAO = RoleDAO.getRoleDAO();
-    
+
+    private RoleDAO roleDAO = RoleDAO.getRoleDAO();
+
     private static UserDAO userDAO = UserDAO.getInstance();
-    
+
     private static UserConverter converter = UserConverter.getInstance();
 
     private static UserService userService;
@@ -39,7 +39,7 @@ public class UserService {
     // Create User 
 
     public String insertUser(UserDTO user) throws NoSuchAlgorithmException {
-        if (checkUserName(user.getUsername()) == 1 ) {
+        if (checkUserName(user.getUsername()) == 1) {
             return null;
         }
         user.setPassword(Utils.hashPassWordMd5(user.getPassword()));
@@ -56,21 +56,31 @@ public class UserService {
         }
         return null;
     }
-    
-    public int checkUserName(String username){
+
+    public int checkUserName(String username) {
         UserEntity entity = userDAO.findUser(username);
-        if(entity != null && entity.getId() != 0) return 1;
+        if (entity != null && entity.getId() != 0) {
+            return 1;
+        }
         return 0;
     }
     
-    public UserDTO getUserById(int userId, int tokenId, String tokenRole) {
-        if (tokenRole.equalsIgnoreCase("admin")
-            || tokenRole.equalsIgnoreCase("employee")
-            || tokenId == userId)
-            return getUserById(userId);
+    public String checkLogin(String email){
+        UserEntity entity = userDAO.findUser(email);
+        if (entity != null && entity.getId() != 0) {
+            return converter.ConvertEntitytoToken(entity);
+        }
         return null;
     }
-    
+
+    public UserDTO getUserById(int userId, int tokenId, String tokenRole) {
+        if (tokenRole.equalsIgnoreCase("admin")
+                || tokenRole.equalsIgnoreCase("employee")
+                || tokenId == userId) {
+            return getUserById(userId);
+        }
+        return null;
+    }
 
     private UserDTO getUserById(int userId) {
         UserEntity userEntity = userDAO.findUser(userId);
@@ -79,9 +89,11 @@ public class UserService {
         }
         return new UserDTO();
     }
-    
-    public List<UserDTO> findAllUsers(String tokenRole){
-        if(tokenRole.equalsIgnoreCase("admin")) return findAllUsers();
+
+    public List<UserDTO> findAllUsers(String tokenRole) {
+        if (tokenRole.equalsIgnoreCase("admin")) {
+            return findAllUsers();
+        }
         return null;
     }
 
@@ -92,30 +104,58 @@ public class UserService {
         return list;
     }
 
+    public List<UserDTO> findByPages(int page, int limit) {
+        List<UserEntity> entityList = userDAO.findByPage(page, limit);
+        if (entityList == null) {
+            return null;
+        }
+        return converter.convertEntitytoDTO(entityList);
+    }
+
     // ----------------------------------------------------------------------
     // Update User
-    
-    private int updateUser(UserEntity user, UserEntity oldUser){
-        if(!user.getFullname().isEmpty()) user.setFullname(oldUser.getFullname());
-        if(!user.getAddress().isEmpty()) user.setAddress(oldUser.getAddress());
-        if(!user.getDateOfBirth().toString().isEmpty()) user.setDateOfBirth(oldUser.getDateOfBirth());
-        if(!user.getPhoneNumber().isEmpty()) user.setPhoneNumber(oldUser.getPhoneNumber());
+    private int updateUser(UserEntity user, UserEntity oldUser) {
+        if (!user.getFullname().isEmpty()) {
+            user.setFullname(oldUser.getFullname());
+        }
+        if (!user.getAddress().isEmpty()) {
+            user.setAddress(oldUser.getAddress());
+        }
+        if (!user.getDateOfBirth().toString().isEmpty()) {
+            user.setDateOfBirth(oldUser.getDateOfBirth());
+        }
+        if (!user.getPhoneNumber().isEmpty()) {
+            user.setPhoneNumber(oldUser.getPhoneNumber());
+        }
         return userDAO.updateUser(user);
     }
-    
+
     public int updateUser(UserDTO user) {
         UserEntity oldUser = userDAO.findUser(user.getId());
-        if(oldUser == null || oldUser.getId() == 0) return 0;
-        else return updateUser(converter.convertDTOtoEntity(user), oldUser);
+        if (oldUser == null || oldUser.getId() == 0) {
+            return 0;
+        } else {
+            return updateUser(converter.convertDTOtoEntity(user), oldUser);
+        }
     }
-    
+
     public int updateUserStatus(int id, int status) {
         return userDAO.updateUserStatus(id, status);
     }
-    
+
     public int updateUserPassword(int id, String password) throws NoSuchAlgorithmException {
         return userDAO.updateUserPassword(id, Utils.hashPassWordMd5(password));
     }
 
     // ----------------------------------------------------------------------
+    //get all count user 
+    public int countAllProduct() {
+        try {
+            int count = userDAO.countAllUser();
+            return count;
+        } catch (Exception e) {
+            System.out.println(e);
+            return 0;
+        }
+    }
 }

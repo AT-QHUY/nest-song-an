@@ -19,6 +19,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -33,10 +34,10 @@ import javax.ws.rs.core.UriInfo;
 public class UserAPI {
 
     private static final UserService userService = UserService.getInstance();
-    
+
     @Context
     private ContainerRequestContext ctx;
-    
+
     @Context
     UriInfo ui;
 
@@ -46,25 +47,70 @@ public class UserAPI {
     public Response getAllUsers() {
 //        UserDTO dto = (UserDTO) ctx.getProperty("tokenObject");
         List<UserDTO> list = userService.findAllUsers("admin");
-        if (list == null) return Response.status(Response.Status.UNAUTHORIZED).build();
-        if (list.isEmpty()) return Response.status(Response.Status.NOT_MODIFIED).build();
-        else return Response.ok(list, MediaType.APPLICATION_JSON).build();
-        
+        if (list == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        if (list.isEmpty()) {
+            return Response.status(Response.Status.NOT_MODIFIED).build();
+        } else {
+            return Response.ok(list, MediaType.APPLICATION_JSON).build();
+        }
 
+    }
+    
+    @POST
+    @Path("login-google")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLoginGoogle(UserDTO dto) {
+        String token = userService.checkLogin(dto.getUsername());
+        if (token == null) {
+            return Response.status(Response.Status.NOT_MODIFIED).build();
+        }
+        else {
+            return Response.ok(token, MediaType.APPLICATION_JSON).build();
+        }
 
     }
     // -------------------------------------------------------------------------
 
-   // get user by id 
+    // Get user by page
+    @GET
+    @Path("page")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsersByPage(@QueryParam("page") int page, @QueryParam("limit") int limit) {
+        List<UserDTO> dtoList = userService.findByPages(page, limit);
+        if (dtoList == null) {
+            return Response.status(Response.Status.NOT_MODIFIED).build();
+        }
+        return Response.ok(dtoList, MediaType.APPLICATION_JSON).build();
+    }
+
+    // -------------------------------------------------------------------------
+    //Count user
+    @GET
+    @Path("/count/all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCountAllProduct() {
+        int count = userService.countAllProduct();
+        return Response.ok(count, MediaType.APPLICATION_JSON).build();
+    }
+
+    // get user by id 
     @GET
     @Path("{isbn}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOneUserById(@PathParam("isbn") int isbn) {
 //        UserDTO dto = (UserDTO) httpRequest.getAttribute("tokenObject");
         UserDTO user = userService.getUserById(isbn, 1, "admin");
-        if (user == null) return Response.status(Response.Status.UNAUTHORIZED).build();
-        if (user.getId() == 0) return Response.status(Response.Status.NOT_MODIFIED).build();
-        else return Response.ok(user, MediaType.APPLICATION_JSON).build();
+        if (user == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        if (user.getId() == 0) {
+            return Response.status(Response.Status.NOT_MODIFIED).build();
+        } else {
+            return Response.ok(user, MediaType.APPLICATION_JSON).build();
+        }
 
     }
 
@@ -76,7 +122,7 @@ public class UserAPI {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertUser(UserDTO user) throws URISyntaxException, NoSuchAlgorithmException {
 
-            String token = userService.insertUser(user);
+        String token = userService.insertUser(user);
         if (token == null) {
             return Response.status(Response.Status.NOT_MODIFIED).build();
         } else {
@@ -100,7 +146,7 @@ public class UserAPI {
             return Response.status(Response.Status.NOT_MODIFIED).build();
         }
     }
-    
+
     // Register
     @POST
     @Path("/register")
@@ -128,16 +174,15 @@ public class UserAPI {
         }
 
     }
-    
+
     // Update user password
-    
     @PUT
     @Path("update-password/{isbn}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUserPassword(@PathParam("isbn") int isbn, UserDTO user) throws NoSuchAlgorithmException {
 
-        int result;       
+        int result;
         result = userService.updateUserPassword(isbn, user.getPassword());
         if (result == 0) {
             return Response.notModified().build();
@@ -145,7 +190,24 @@ public class UserAPI {
             return Response.ok().build();
         }
 
-    } 
+    }
+    
+    // unblock user
+    @PUT
+    @Path("update-unblock/{isbn}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateUserPassword(@PathParam("isbn") int isbn) throws NoSuchAlgorithmException {
+
+        int result;
+        result = userService.updateUserStatus(isbn, 1);
+        if (result == 0) {
+            return Response.notModified().build();
+        } else {
+            return Response.ok().build();
+        }
+
+    }
 
     //--------------------------------------------------------------------------
     // Delete an user by changing status
@@ -155,7 +217,7 @@ public class UserAPI {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteUser(@PathParam("isbn") int isbn) {
 
-        int result ;
+        int result;
         result = userService.updateUserStatus(isbn, 0);
         if (result == 0) {
             return Response.notModified().build();

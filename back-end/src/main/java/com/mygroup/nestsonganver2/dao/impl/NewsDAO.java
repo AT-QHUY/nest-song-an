@@ -18,23 +18,25 @@ import java.util.List;
  *
  * @author dd220
  */
-public class NewsDAO extends AbstractDAO<NewsEntity> implements INewsDAO{
-    
+public class NewsDAO extends AbstractDAO<NewsEntity> implements INewsDAO {
+
     public static NewsDAO instance;
-    
+
     public static NewsDAO getNewsDAO() {
-        if (instance == null)
+        if (instance == null) {
             instance = new NewsDAO();
+        }
         return instance;
     }
-    
-    private NewsDAO(){}
-   
+
+    private NewsDAO() {
+    }
+
     //GET
     @Override
     public List<NewsEntity> getAllNews() {
         List<NewsEntity> list = new ArrayList<>();
-        try { 
+        try {
             list = query(NewsSQL.findAll, new NewsMapper());
         } catch (Exception ex) {
             System.out.println(ex);
@@ -47,24 +49,52 @@ public class NewsDAO extends AbstractDAO<NewsEntity> implements INewsDAO{
         List<NewsEntity> list;
         try {
             list = query(NewsSQL.findNewsById, new NewsMapper(), id);
-            if (!list.isEmpty()) return list.get(0);
+            if (!list.isEmpty()) {
+                return list.get(0);
+            }
         } catch (Exception ex) {
             System.out.println(ex);
         }
         return null;
     }
-    
+
+    public List<NewsEntity> getNewsPaginantion(int offset, int fetch) {
+        List<NewsEntity> list;
+        try {
+            list = query(NewsSQL.paginationNews, new NewsMapper(), offset, fetch);
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<NewsEntity> getNewsByCatePagination(int cateId, int offset, int fetch) {
+        List<NewsEntity> list;
+        try {
+            list = query(NewsSQL.paginationNewsByCate, new NewsMapper(), cateId, offset, fetch);
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
     //Add 
     @Override
     public int addNews(NewsEntity news) {
-        int id = insert(NewsSQL.add, news.getDescription(), news.getShortDescription(), news.getTitle(), news.getEmpId());
+        int id = insert(NewsSQL.add, news.getDescription(), news.getShortDescription(), news.getTitle(), news.getEmpId(), news.getCateId());
         return id;
     }
-    
+
     //update news  by id
     @Override
     public int updateNewsById(NewsEntity news) {
-        int result = update(NewsSQL.update, news.getDescription(), news.getShortDescription(), news.getTitle(), news.getEmpId(), news.getId());
+        int result = update(NewsSQL.update, news.getDescription(), news.getShortDescription(), news.getTitle(), news.getEmpId(), news.getCateId(), news.getId());
         return result;
     }
 
@@ -86,5 +116,5 @@ public class NewsDAO extends AbstractDAO<NewsEntity> implements INewsDAO{
         }
         return check;
     }
-    
+
 }

@@ -38,7 +38,6 @@ public class UserMapper implements RowMapper<UserEntity>{
             Logger.getLogger(UserMapper.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-       
     }
     
 }

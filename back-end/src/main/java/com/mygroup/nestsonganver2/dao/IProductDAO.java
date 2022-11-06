@@ -5,6 +5,7 @@
 package com.mygroup.nestsonganver2.dao;
 
 import com.mygroup.nestsonganver2.dto.Filter;
+import com.mygroup.nestsonganver2.dto.ProductDTO;
 import com.mygroup.nestsonganver2.entity.ProductEntity;
 import java.util.List;
 
@@ -39,4 +40,6 @@ public interface IProductDAO extends IDao<ProductEntity> {
     public List<ProductEntity> getAllByPages(int page , int limit);
     
     public int countAllProduct();
+    
+    public List<ProductDTO> getStaticValue();
 }

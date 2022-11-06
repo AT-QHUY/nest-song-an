@@ -29,6 +29,8 @@ public interface IUserDAO extends IDao<UserEntity> {
     public UserEntity findUser(int id);
     
     public List<UserEntity> findAll();
+    
+    public List<UserEntity> findByPage(int page, int limit);
 
     // ----------------------------------------------------------------------
     
@@ -42,6 +44,6 @@ public interface IUserDAO extends IDao<UserEntity> {
     
     // ----------------------------------------------------------------------
  
-
-   
+    // Count users
+    public int countAllUser();
 }

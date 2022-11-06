@@ -8,6 +8,7 @@ import com.mygroup.nestsonganver2.dao.impl.BillDetailsDAO;
 import com.mygroup.nestsonganver2.dao.impl.PaymentStatusDAO;
 import com.mygroup.nestsonganver2.dto.BillDTO;
 import com.mygroup.nestsonganver2.entity.BillEntity;
+import com.mygroup.nestsonganver2.entity.PaymentStatusEntity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,8 @@ public class BillConverter {
         dto.setTotalPrice(entity.getTotalPrice());
         dto.setAddress(entity.getAddress());
         dto.setPhoneNumber(entity.getPhoneNumber());
-        dto.setPaymentStatusCode(PAYMENT_STATUS_DAO.findOneById(entity.getPaymentStatusId()).getCode());
+        PaymentStatusEntity tmp = PAYMENT_STATUS_DAO.findOneById(entity.getPaymentStatusId());
+        dto.setPaymentStatusCode((tmp == null) ? "": tmp.getCode());
         return dto;
     }
 

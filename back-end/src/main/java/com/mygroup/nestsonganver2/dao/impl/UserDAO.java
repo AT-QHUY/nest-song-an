@@ -1,4 +1,4 @@
-    /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -41,21 +41,27 @@ public class UserDAO extends AbstractDAO<UserEntity> implements IUserDAO {
     @Override
     public UserEntity findUser(String username, String password) {
         List<UserEntity> userList = query(UserSQL.login, new UserMapper(), username, password);
-        if(userList == null) return null;
+        if (userList == null) {
+            return null;
+        }
         return userList.isEmpty() ? null : userList.get(0);
     }
 
     @Override
     public List<UserEntity> findAll() {
         List<UserEntity> userList = query(UserSQL.findAll, new UserMapper());
-        if (userList == null) return new ArrayList<>();
+        if (userList == null) {
+            return new ArrayList<>();
+        }
         return userList;
     }
 
     @Override
     public UserEntity findUser(int id) {
         List<UserEntity> userList = query(UserSQL.findById, new UserMapper(), id);
-        if(userList == null || userList.isEmpty()) return new UserEntity();
+        if (userList == null || userList.isEmpty()) {
+            return new UserEntity();
+        }
         return userList.get(0);
     }
 
@@ -77,12 +83,25 @@ public class UserDAO extends AbstractDAO<UserEntity> implements IUserDAO {
     }
 
     // ----------------------------------------------------------------------
-
     @Override
     public UserEntity findUser(String username) {
         List<UserEntity> list = query(UserSQL.findByUsername, new UserMapper(), username);
-        if(list != null && !list.isEmpty()) return list.get(0);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
         return new UserEntity();
     }
-}
 
+    @Override
+    public List<UserEntity> findByPage(int page, int limit) {
+        int numberOfProducts = limit * (page - 1);
+        List<UserEntity> userList = query(UserSQL.findByPage, new UserMapper(), numberOfProducts, limit);
+        return (userList.isEmpty()) ? null : userList;
+    }
+
+    @Override
+    public int countAllUser() {
+        int count = queryCount(UserSQL.countAllUser);
+        return count;
+    }
+}
