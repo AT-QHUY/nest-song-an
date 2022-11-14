@@ -23,6 +23,9 @@ public class BillService {
     private static final BillDetailsConverter BILL_DETAILS_CONVERTER = BillDetailsConverter.getInstance();
     private static final BillDetailsDAO BILL_DETAILS_DAO = BillDetailsDAO.getInstance();
     private static final BillConverter BILL_CONVERTER = BillConverter.getInstance();
+        private static final PaymentStatusService PAYMENT_STATUS_SERVICE = PaymentStatusService.getPaymentStatusInstance();
+
+    
     private static BillService billService = null;
 
     public static BillService getInstance() {
@@ -110,11 +113,14 @@ public class BillService {
 //    
 //=======
 //
-//>>>>>>> dfa784021f881b50e14031edf9b3689be68b313e
+//>>>>>>> dfa784021f881b50e14031edf9b3689be68b313e2
     //--------------------------------------------------------------------------
     //update bill
-    public int updateStatus(int id, int status) {
-        return billDAO.updateStatus(id, status);
+    public boolean updateStatus(int id, int status) {
+        if (billDAO.updateStatus(id, status) != 0){
+            return PAYMENT_STATUS_SERVICE.setStatus(id, 2 );
+        }
+        return false;
     }
 
     public int updateBill(int id, BillDTO bill) {
@@ -138,5 +144,11 @@ public class BillService {
             result = BILL_CONVERTER.convertListEntitytoDTO(listEntity);
         }
         return result;
+    }
+    
+    //calculate static value
+    
+    public List<BillDTO> getTotalPriceByMonth(){
+        return billDAO.findTotalPriceByMonth();
     }
 }

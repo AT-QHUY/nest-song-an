@@ -65,11 +65,8 @@ public class ProductService {
     public int addNewProduct(ProductDTO product) throws NoSuchAlgorithmException {
         final int result = productDAO.addNewProduct(ProductConverter.convertDTOtoEntity(product));
         if (result != 0) {
-            ImageDTO imgDTO = new ImageDTO();
-            product.getListStringImages().forEach(imageItem -> {
-                imgDTO.setImgPath(imageItem);
-                imgDTO.setProductId(result);
-                imageService.addImage(imgDTO);
+            product.getListImages().forEach(imageItem -> {
+                addProductImage(result, imageItem.getImgPath());
             });
         }
         return result;
@@ -95,12 +92,36 @@ public class ProductService {
     }
 
     public int updateProduct(ProductDTO product) {
-        return productDAO.updateProduct(ProductConverter.convertDTOtoEntity(checkBeforeUpdate(product)));
+        ProductDTO oldProductDTO = getProductById(product.getId());
+        product = updateProduct(product, oldProductDTO);
+        updateListImages(product.getId(), product, oldProductDTO);
+        return productDAO.updateProduct(ProductConverter.convertDTOtoEntity(product));
         //Add roleID for user
     }
+    
+    private void updateListImages(int productId, ProductDTO newDTO, ProductDTO oldDTO) {
+        List<ImageDTO> newList = newDTO.getListImages();
+        List<ImageDTO> oldList = oldDTO.getListImages();
+        newList.forEach((item) -> {
+            if (item.getId() != 0) {
+                oldList.removeIf(oldItem -> (oldItem.getId() == item.getId()));
+            } else {
+                addProductImage(productId, item.getImgPath());
+            }
+        });
+        oldList.forEach(oldItem -> {
+            imageService.removeProductId(oldItem.getId());
+        });
+    }
+    
+    private void addProductImage(int id, String imgPath) {
+        ImageDTO imageDTO = new ImageDTO();
+        imageDTO.setImgPath(imgPath);
+        imageDTO.setProductId(id);
+        imageService.addImage(imageDTO);
+    }
 
-    private ProductDTO checkBeforeUpdate(ProductDTO product) {
-        ProductDTO oldProductDTO = getProductById(product.getId());
+    private ProductDTO updateProduct(ProductDTO product, ProductDTO oldProductDTO) {
         if (product.getName() == null) {
             product.setName(oldProductDTO.getName());
         }

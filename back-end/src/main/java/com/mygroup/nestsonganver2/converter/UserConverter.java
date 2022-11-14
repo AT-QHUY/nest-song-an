@@ -71,7 +71,7 @@ public class UserConverter {
         UserDTO dto = new UserDTO();
         String[] propString;
         if (token != null && !token.isEmpty()) {
-
+            token = token.replaceAll("\"", "");
             String[] tokenArray = token.split("[|]");
             for (String prop : tokenArray) {
                 propString = prop.split("=");
@@ -113,7 +113,7 @@ public class UserConverter {
         LocalDateTime now = LocalDateTime.now().plusHours(1);
         builder.append("expired=").append(Utils.dtf.format(now)).append("|");
         builder.append("id=").append(entity.getId()).append("|");
-        builder.append("fullname=").append(entity.getFullname()).append("|");
+        builder.append("fullname=").append(Utils.deAccent(entity.getFullname())).append("|");
         builder.append("role=").append((roleDao.getRoleById(entity.getRoleId())).getName());
         return builder.toString();
     }

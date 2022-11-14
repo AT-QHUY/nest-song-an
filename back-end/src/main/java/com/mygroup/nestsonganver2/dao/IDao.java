@@ -7,8 +7,10 @@
 package com.mygroup.nestsonganver2.dao;
 
 import com.mygroup.nestsonganver2.mapper.RowMapper;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  *
@@ -28,4 +30,6 @@ public interface IDao<T> {
     Integer insert(String sql, Object... parameters);
     
     int queryCount(String sql, Object... parameters);
+    
+    <T> List<T> query(String sql, Function<ResultSet, T> func, Object... parameters);
 }

@@ -44,4 +44,8 @@ public class PaymentStatusService {
         }
         return new PaymentStatusDTO();
     }
+    
+    public boolean setStatus(int id, int status){
+        return paymentStatusDAO.updateStatus(id, status) != 0; 
+    }
 }

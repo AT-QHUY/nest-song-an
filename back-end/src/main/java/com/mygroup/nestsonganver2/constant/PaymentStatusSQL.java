@@ -10,7 +10,14 @@ package com.mygroup.nestsonganver2.constant;
  * @author huy
  */
 public class PaymentStatusSQL {
+  
     public static String findAll = "SELECT * FROM PaymentStatus";
     public static String findOneById = "Select * from PaymentStatus \n"
                                      + "where id = ?";
+   
+    //------------------------------
+    
+    public static String updateStatus = "UPDATE Bills\n"
+                                      + "set payment_status_id = ?\n"
+                                      + "where id = ?";
 }

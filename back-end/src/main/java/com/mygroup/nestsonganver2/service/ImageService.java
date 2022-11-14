@@ -17,64 +17,72 @@ import java.util.Optional;
  * @author dd220
  */
 public class ImageService {
-    
+
     private ImageDAO imgDAO = ImageDAO.getImageDAO();
 
     public static ImageService instance;
-    
+
     public static ImageService getImageService() {
-        if (instance == null)
+        if (instance == null) {
             instance = new ImageService();
+        }
         return instance;
     }
-    
-    private ImageService(){}
-    
+
+    private ImageService() {
+    }
+
     //Add new image
-    public int addImage(ImageDTO img){
-            imgDAO.addImage(ImageConverter.ConvertDTOToEntity(img));
-            return imgDAO.getIdOfLastImage();
+    public int addImage(ImageDTO img) {
+        imgDAO.addImage(ImageConverter.ConvertDTOToEntity(img));
+        return imgDAO.getIdOfLastImage();
     }
 //-------------------------------------------------------------------------------------------------------------------------------
     //Get Image
+
     public List<ImageDTO> getAllImages() {
         List<ImageEntity> list = imgDAO.getAllImages();
-        if (list == null) return new ArrayList<>();
+        if (list == null) {
+            return new ArrayList<>();
+        }
         ImageDTO dto;
         List<ImageDTO> listDTO = new ArrayList<>();
-        for (ImageEntity entity: list) {
+        for (ImageEntity entity : list) {
             dto = ImageConverter.ConvertEntityToDTO(entity);
             listDTO.add(dto);
         }
         return listDTO;
     }
-    
-    
+
     public ImageDTO getImageById(int id) {
         ImageEntity entity = imgDAO.getImage(id);
-        if (entity == null) return null;
+        if (entity == null) {
+            return null;
+        }
         ImageDTO dto = ImageConverter.ConvertEntityToDTO(entity);
         return dto;
     }
-    
+
     public List<ImageDTO> getImagesByProductId(int productId) {
         List<ImageEntity> entityList = imgDAO.getImagesByProductId(productId);
 //        if (entityList.isEmpty() || entityList == null) return null;
         ImageDTO dto;
         List<ImageDTO> listDTO = new ArrayList<>();
-        for(ImageEntity entity : entityList) {
+        for (ImageEntity entity : entityList) {
             dto = ImageConverter.ConvertEntityToDTO(entity);
             listDTO.add(dto);
         }
         return listDTO;
     }
-    
+
     public List<ImageDTO> getImagesByNewsId(int newsId) {
         List<ImageEntity> entityList = imgDAO.getImageByNewsId(newsId);
-        if (entityList == null || entityList.isEmpty()) return new ArrayList<>();
+        if (entityList == null || entityList.isEmpty()) {
+            return new ArrayList<>();
+        }
         ImageDTO dto;
         List<ImageDTO> listDTO = new ArrayList<>();
-        for(ImageEntity entity : entityList) {
+        for (ImageEntity entity : entityList) {
             dto = ImageConverter.ConvertEntityToDTO(entity);
             listDTO.add(dto);
         }
@@ -82,29 +90,46 @@ public class ImageService {
     }
 //-------------------------------------------------------------------------------------------------------------------------------
     //Update image by ID
+
     public ImageDTO updateImageById(int id, ImageDTO dto) {
         ImageDTO old = getImageById(id);
-        
-        if (old == null) return null;
-        if (dto == null) return old;
-        
-        if (dto.getImgPath() != null) old.setImgPath(dto.getImgPath());
-        if (dto.getNewsId() != null && dto.getNewsId() != 0) old.setNewsId(dto.getNewsId());
-        if (dto.getProductId() != null && dto.getProductId() != 0) old.setProductId(dto.getProductId());
-        
-        imgDAO.updateImageById(ImageConverter.ConvertDTOToEntity(old)); 
+
+        if (old == null) {
+            return null;
+        }
+        if (dto == null) {
+            return old;
+        }
+
+        if (dto.getImgPath() != null) {
+            old.setImgPath(dto.getImgPath());
+        }
+        if (dto.getNewsId() != null && dto.getNewsId() != 0) {
+            old.setNewsId(dto.getNewsId());
+        }
+        if (dto.getProductId() != null && dto.getProductId() != 0) {
+            old.setProductId(dto.getProductId());
+        }
+
+        imgDAO.updateImageById(ImageConverter.ConvertDTOToEntity(old));
         return old;
     }
 //-------------------------------------------------------------------------------------------------------------------------------
 
     //Delete image by ID
     public boolean deleteImage(int id) {
-        if (imgDAO.deleteImage(id))
+        if (imgDAO.deleteImage(id)) {
             return true;
+        }
         return false;
     }
 
-    
+    public boolean removeNewsId(int id) {
+        return imgDAO.removeNewsId(id);
+    }
 
-    
+    public boolean removeProductId(int id) {
+        return imgDAO.removeProductID(id);
+    }
+
 }

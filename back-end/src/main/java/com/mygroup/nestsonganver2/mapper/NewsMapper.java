@@ -19,8 +19,8 @@ public class NewsMapper implements RowMapper<NewsEntity>{
             return new NewsEntity(
                                 rs.getInt("id")
                                ,rs.getString("description")
-                               ,rs.getString("title")
                                ,rs.getString("shortDescription")
+                               ,rs.getString("title")
                                ,rs.getInt("empId")
                                , rs.getInt("cateId")
             );

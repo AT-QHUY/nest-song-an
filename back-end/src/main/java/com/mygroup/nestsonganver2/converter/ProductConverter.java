@@ -4,6 +4,7 @@
  */
 package com.mygroup.nestsonganver2.converter;
 
+import com.mygroup.nestsonganver2.dao.impl.CommentDAO;
 import com.mygroup.nestsonganver2.dao.impl.ImageDAO;
 import com.mygroup.nestsonganver2.dto.ImageDTO;
 import com.mygroup.nestsonganver2.dto.ProductDTO;
@@ -19,6 +20,10 @@ import java.util.List;
 public class ProductConverter {
     // Convert Entitty to DTO
     
+     private static CommentConverter commentConverter=CommentConverter.getInstance();
+     
+     private static CommentDAO commentDAO= CommentDAO.getInstance(); 
+     
    private static ProductConverter productConverter;
     
     public static ProductConverter getInstance(){
@@ -49,6 +54,7 @@ public class ProductConverter {
         dto.setCateId(entity.getCateId());
         dto.setStatus(entity.getStatus());
         dto.setListImages(convertImages(imageDAO.getImagesByProductId(entity.getId())));
+        dto.setStar(commentDAO.getRatingByProductId(entity.getId()));
         return dto;
     }   
     // -----------------------------------------------------------------------

@@ -57,7 +57,7 @@ public class UserAPI {
         }
 
     }
-    
+
     @POST
     @Path("login-google")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -66,8 +66,7 @@ public class UserAPI {
         String token = userService.checkLogin(dto.getUsername());
         if (token == null) {
             return Response.status(Response.Status.NOT_MODIFIED).build();
-        }
-        else {
+        } else {
             return Response.ok(token, MediaType.APPLICATION_JSON).build();
         }
 
@@ -158,19 +157,20 @@ public class UserAPI {
 
     //--------------------------------------------------------------------------
     // Update an user in database
-    @PUT
+    @POST
     @Path("{isbn}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("isbn") int isbn, UserDTO user) {
 
-        int result;
+        String token;
         user.setId(isbn);
-        result = userService.updateUser(user);
-        if (result == 0) {
+        token = userService.updateUser(user);
+        if (token == null || token.isEmpty()) {
             return Response.notModified().build();
         } else {
-            return Response.ok().build();
+            return Response.ok(token, MediaType.APPLICATION_JSON).build();
+
         }
 
     }
@@ -191,13 +191,13 @@ public class UserAPI {
         }
 
     }
-    
+
     // unblock user
     @PUT
     @Path("update-unblock/{isbn}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateUserPassword(@PathParam("isbn") int isbn) throws NoSuchAlgorithmException {
+    public Response updateUserStatus(@PathParam("isbn") int isbn) throws NoSuchAlgorithmException {
 
         int result;
         result = userService.updateUserStatus(isbn, 1);

@@ -14,11 +14,13 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -26,11 +28,10 @@ import java.util.logging.Logger;
  */
 public class Utils {
 
-    
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    
-    
-     public static Connection makeConnection() {
+    public static DateTimeFormatter dtfWithSpace = DateTimeFormatter.ofPattern("yyyy-MM-dd HH: mm: ss");
+
+    public static Connection makeConnection() {
         Connection conn = null;
         try {
             String dbURL = "jdbc:sqlserver://nestsongan.cqtchuhryqsc.ap-southeast-1.rds.amazonaws.com;databaseName=NestSongAn";
@@ -43,7 +44,7 @@ public class Utils {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             conn = DriverManager.getConnection(dbURL, user, pass);
             //System.out.println("Connect to DB successfully");
-        } catch (Exception ex) {    
+        } catch (Exception ex) {
 
             ex.printStackTrace();
         }
@@ -71,7 +72,7 @@ public class Utils {
         }
         return hashtext;
     }
-    
+
     public static String GetOTP(int length) {
         String number = "1234567890";
         Random ran = new Random();
@@ -81,6 +82,12 @@ public class Utils {
             result.append(value);
         }
         return result.toString();
+    }
+
+    public static String deAccent(String str) {
+        String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(nfdNormalizedString).replaceAll("");
     }
 //    expired=2022-10-0600:00:00|id=1|fullname=admin|role=admin
 //    

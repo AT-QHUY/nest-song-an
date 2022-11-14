@@ -22,6 +22,12 @@ public class BillDTO {
     private String paymentStatusCode;
     private int paymentStatusCodeId;
     
+    
+    //static value
+    
+    private String MonthYear;
+    private float totalByMonth;
+    
     private static BillDTO billDTO = null;
 
     public static BillDTO getInstance() {
@@ -49,6 +55,24 @@ public class BillDTO {
         this.paymentStatusCode = paymentStatusCode;
         this.paymentStatusCodeId = paymentStatusCodeId;
     }
+
+    public String getMonthYear() {
+        return MonthYear;
+    }
+
+    public void setMonthYear(String MonthYear) {
+        this.MonthYear = MonthYear;
+    }
+
+    public float getTotalByMonth() {
+        return totalByMonth;
+    }
+
+    public void setTotalByMonth(float totalByMonth) {
+        this.totalByMonth = totalByMonth;
+    }
+    
+    
 
     public String getPaymentStatusCode() {
         return paymentStatusCode;

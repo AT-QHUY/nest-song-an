@@ -115,27 +115,36 @@ public class UserService {
     // ----------------------------------------------------------------------
     // Update User
     private int updateUser(UserEntity user, UserEntity oldUser) {
-        if (!user.getFullname().isEmpty()) {
+        if (user.getFullname() == null || user.getFullname().isEmpty()) {
             user.setFullname(oldUser.getFullname());
         }
-        if (!user.getAddress().isEmpty()) {
+        if (user.getAddress() == null || user.getAddress().isEmpty()) {
             user.setAddress(oldUser.getAddress());
         }
-        if (!user.getDateOfBirth().toString().isEmpty()) {
+        if (user.getDateOfBirth() == null || user.getDateOfBirth().toString().isEmpty()) {
             user.setDateOfBirth(oldUser.getDateOfBirth());
         }
-        if (!user.getPhoneNumber().isEmpty()) {
+        if (user.getPhoneNumber() == null || user.getPhoneNumber().isEmpty()) {
             user.setPhoneNumber(oldUser.getPhoneNumber());
         }
         return userDAO.updateUser(user);
     }
+    
+    private String getToken(int id){
+        UserEntity user = userDAO.findUser(id);
+        if (user != null && user.getId() != 0) {
+            return converter.ConvertEntitytoToken(user);
+        }
+        return null;
+        
+    }
 
-    public int updateUser(UserDTO user) {
+    public String updateUser(UserDTO user) {
         UserEntity oldUser = userDAO.findUser(user.getId());
         if (oldUser == null || oldUser.getId() == 0) {
-            return 0;
+            return null;
         } else {
-            return updateUser(converter.convertDTOtoEntity(user), oldUser);
+            return getToken(updateUser(converter.convertDTOtoEntity(user), oldUser));
         }
     }
 

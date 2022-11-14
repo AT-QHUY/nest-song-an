@@ -18,4 +18,6 @@ public interface IPaymentStatusDAO extends IDao<PaymentStatusEntity>{
     public List<PaymentStatusEntity> findAll();
     
     public PaymentStatusEntity findOneById(int id);
+    
+    public int updateStatus(int id, int status);
 }

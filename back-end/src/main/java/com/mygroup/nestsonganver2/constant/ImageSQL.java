@@ -9,28 +9,35 @@ package com.mygroup.nestsonganver2.constant;
  * @author dd220
  */
 public class ImageSQL {
-    
+
     // insert Image
     public static String insertNew = "INSERT Images (path, productId, newsId)\n"
-                                   + "VALUES\n"
-                                   + "(?, ?, ?)";
-    
+            + "VALUES\n"
+            + "(?, ?, ?)";
+
     //get Image
     public static String findAll = "SELECT * FROM Images";
     public static String findById = "SELECT * FROM Images where id = ?";
     public static String findByProductId = "SELECT * FROM Images where productId = ?";
     public static String findByNewsId = "SELECT * FROM Images where newsId = ?";
-   
-   //update Image
+
+    //update Image
     public static String updateImageById = "UPDATE Images\n"
-                                        + "SET path = ?,\n"
-                                        + "    newsId = ?,\n"
-                                        + "    productId = ?\n"
-                                        + "WHERE id = ? ";
+            + "SET path = ?,\n"
+            + "    newsId = ?,\n"
+            + "    productId = ?\n"
+            + "WHERE id = ? ";
+
+    public static String removeNewsId = "UPDATE Images\n"
+            + "SET newsId = null\n"
+            + "WHERE id = ?";
+    public static String removeProductId = "UPDATE Images\n"
+            + "SET productId = null\n"
+            + "WHERE id = ?";
 //    public static String updateImageByProductId = "UPDATE [dbo].[Images]"
 //                                        + "SET path = ?"
 //                                        + "WHERE productId = ? ";
 //    public static String updateImageByNewsId = "UPDATE [dbo].[Images]"
 //                                        + "SET path = ?"
 //                                        + "WHERE id = ? ";
-}   
+}

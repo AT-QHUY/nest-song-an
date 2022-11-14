@@ -4,6 +4,7 @@
  */
 package com.mygroup.nestsonganver2.dao;
 
+import com.mygroup.nestsonganver2.dto.BillDTO;
 import com.mygroup.nestsonganver2.entity.BillEntity;
 import java.util.List;
 
@@ -36,4 +37,7 @@ public interface IBillDAO extends IDao<BillEntity> {
     public int updateBill(BillEntity bill);
     public List<BillEntity> findByEmpIdAndStatus(int empId, int status);
     public List<BillEntity> findByCustomerIdAndStatus(int empId, int status);
+    
+    //static value
+    public List<BillDTO> findTotalPriceByMonth();
 }

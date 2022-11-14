@@ -12,6 +12,8 @@ import com.mygroup.nestsonganver2.entity.NewsCategoryEntity;
 import com.mygroup.nestsonganver2.entity.NewsEntity;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -31,7 +33,6 @@ public class NewsService {
 
     private NewsService() {
     }
-    private NewsCategoryService cateService = NewsCategoryService.getNewsCategoryDAO();
     private NewsDAO newsDAO = NewsDAO.getNewsDAO();
 
     //Get all News service
@@ -41,17 +42,10 @@ public class NewsService {
             return new ArrayList<NewsDTO>();
         }
         NewsDTO dto = new NewsDTO();
-        List<NewsCategoryEntity> cateList = cateService.findAllNewsCategory();
         List<NewsDTO> dtoList = new ArrayList<>();
         for (NewsEntity entity : entityList) {
             dto = NewsConverter.convertEntityToDTO(entity);
             dtoList.add(dto);
-            for (NewsCategoryEntity cate : cateList) {
-                if (cate.getId() == entity.getCateId()) {
-                    dto.setCate(cate);
-                    break;
-                }
-            }
         }
         return dtoList;
     }
@@ -64,13 +58,6 @@ public class NewsService {
             return dto;
         }
         dto = NewsConverter.convertEntityToDTO(entity);
-        List<NewsCategoryEntity> cateList = cateService.findAllNewsCategory();
-        for (NewsCategoryEntity cate : cateList) {
-            if (cate.getId() == entity.getCateId()) {
-                dto.setCate(cate);
-                break;
-            }
-        }
         return dto;
     }
 
@@ -86,16 +73,9 @@ public class NewsService {
             return new ArrayList();
         }
         NewsDTO dto = new NewsDTO();
-        List<NewsCategoryEntity> cateList = cateService.findAllNewsCategory();
         List<NewsDTO> dtoList = new ArrayList<>();
         for (NewsEntity entity : newsList) {
             dto = NewsConverter.convertEntityToDTO(entity);
-            for (NewsCategoryEntity cate : cateList) {
-                if (cate.getId() == entity.getCateId()) {
-                    dto.setCate(cate);
-                    break;
-                }
-            }
             dtoList.add(dto);
 
         }
@@ -104,8 +84,10 @@ public class NewsService {
 
     //Get news by cate 
     public List<NewsDTO> getNewsByCategoryPagination(int cateId, int page, int numberOfNews) {
-        int offset = page * numberOfNews;
-        if (page > 0 && page != 1) {
+        int offset = 0;
+        if(page <= 0 || page == 1) {
+            offset = 0;
+        } else if (page > 1) {
             offset = (page - 1) * numberOfNews;
         }
         int fetch = numberOfNews;
@@ -114,15 +96,21 @@ public class NewsService {
         if (newsList == null || newsList.isEmpty()) {
             return new ArrayList<>();
         }
-        NewsCategoryEntity cateEntity = cateService.findNewsCategory(cateId);
         NewsDTO dto = new NewsDTO();
         List<NewsDTO> dtoList = new ArrayList<>();
         for (NewsEntity entity : newsList) {
             dto = NewsConverter.convertEntityToDTO(entity);
-            dto.setCate(cateEntity);
             dtoList.add(dto);
         }
         return dtoList;
+    }
+    
+    public List<NewsDTO> getAllNewsByCategoryPagination(int cateId) {
+        List<NewsDTO> result = getAllNews();
+        if (result == null) return new ArrayList<>();
+        return result.stream()
+                .filter(n -> n.getCate().getId() == cateId)
+                .collect(Collectors.toList());
     }
 
     //Add news 
@@ -149,14 +137,35 @@ public class NewsService {
 
         int id = newsDAO.addNews(add);
         if (id != 0) {
-            ImageDTO imageDTO = new ImageDTO();
-            imageDTO.setImgPath(dto.getImagePath());
-            imageDTO.setNewsId(id);
-            imageService.addImage(imageDTO);
+            dto.getListImages().forEach(item -> {
+                addNewsImage(id, item.getImgPath());
+            });
         } else {
             return 0;
         }
         return id;
+    }
+
+    private void addNewsImage(int id, String imgPath) {
+        ImageDTO imageDTO = new ImageDTO();
+        imageDTO.setImgPath(imgPath);
+        imageDTO.setNewsId(id);
+        imageService.addImage(imageDTO);
+    }
+
+    public void updateListImages(int newsId, NewsDTO newDTO, NewsDTO oldDTO) {
+        List<ImageDTO> newList = newDTO.getListImages();
+        List<ImageDTO> oldList = oldDTO.getListImages();
+        newList.forEach((item) -> {
+            if (item.getId() != 0) {
+                oldList.removeIf(oldItem -> (oldItem.getId() == item.getId()));
+            } else {
+                addNewsImage(newsId, item.getImgPath());
+            }
+        });
+        oldList.forEach(oldItem -> {
+            imageService.removeNewsId(oldItem.getId());
+        });
     }
 
     //update news by id
@@ -178,6 +187,10 @@ public class NewsService {
         if (dto.getShortDescription() != null) {
             old.setShortDescription(dto.getShortDescription());
         }
+        
+        if (dto.getTitle()!= null) {
+            old.setTitle(dto.getTitle());
+        }
 
         if (dto.getEmpId() != old.getEmpId() && dto.getEmpId() != 0) {
             old.setEmpId(dto.getEmpId());
@@ -187,11 +200,11 @@ public class NewsService {
                 old.setCateId(dto.getCate().getId());
             }
         }
+        updateListImages(id, dto, NewsConverter.convertEntityToDTO(old));
 
         int check = newsDAO.updateNewsById(old);
         if (check != 0) {
             NewsDTO result = NewsConverter.convertEntityToDTO(old);
-            result.setCate(cateService.findNewsCategory(old.getCateId()));
             return result;
         }
         return null;

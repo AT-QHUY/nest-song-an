@@ -49,11 +49,11 @@ public class ProductAPI {
             return Response.ok(list, MediaType.APPLICATION_JSON).build();
     }
     
-    @POST
-    @Path("/status")
+    @GET
+    @Path("all")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByStatus(ProductDTO product){
-        List<ProductDTO> list = productService.getByStatus(product.getStatus());
+    public Response getByStatus(@QueryParam("status") int status){
+        List<ProductDTO> list = productService.getByStatus(status);
         if (list.isEmpty()) 
             return Response.status(Response.Status.NOT_MODIFIED).build();
 
@@ -88,7 +88,7 @@ public class ProductAPI {
     
      //Get all product by pages
     @GET
-    @Path("/page/all")
+    @Path("page/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllByPages(@QueryParam("page") int page, @QueryParam("limit") int limit) {
         List<ProductDTO> product = productService.getAllByPages(page, limit);
@@ -101,7 +101,7 @@ public class ProductAPI {
     
     //Get count all product
     @GET
-    @Path("/count/all")
+    @Path("count/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCountAllProduct(){
         int count = productService.countAllProduct();
@@ -111,7 +111,7 @@ public class ProductAPI {
 
     //add new product
     @POST
-    @Path("/add")
+    @Path("add")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addNewProduct(ProductDTO product) throws URISyntaxException, NoSuchAlgorithmException {
@@ -173,7 +173,7 @@ public class ProductAPI {
     
     // Reactive product
     @DELETE
-    @Path("/{isbn}")
+    @Path("{isbn}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteProduct(@PathParam("isbn") int isbn)throws URISyntaxException, NoSuchAlgorithmException {
@@ -187,7 +187,7 @@ public class ProductAPI {
     }
     
     @PUT
-    @Path("/status/{isbn}")
+    @Path("status/{isbn}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response reactiveProduct(@PathParam("isbn") int isbn, ProductDTO dto)throws URISyntaxException, NoSuchAlgorithmException {
@@ -202,7 +202,7 @@ public class ProductAPI {
    
     //filter 
     @POST
-    @Path("/filter")
+    @Path("filter")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response filterProducts(Filter filter) throws NoSuchAlgorithmException {      
@@ -215,7 +215,7 @@ public class ProductAPI {
     
     //Show products by pages
     @GET
-    @Path("/page")
+    @Path("page")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductByPages(@QueryParam("page") int page, @QueryParam("limit") int limit) {
         List<ProductDTO> product = productService.getProductByPages(page, limit);

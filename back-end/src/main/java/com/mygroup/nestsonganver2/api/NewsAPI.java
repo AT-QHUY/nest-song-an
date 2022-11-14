@@ -47,12 +47,6 @@ public class NewsAPI {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllNews() {
         List<NewsDTO> list = newsService.getAllNews();
-        for (NewsDTO news : list) {
-            List<ImageDTO> listImage = imgService.getImagesByNewsId(news.getId());
-            if (!listImage.isEmpty()) {
-                news.getListImages().add(listImage.get(0));
-            }
-        }
         if (list.isEmpty()) {
             return Response.noContent().build();
         }
@@ -65,8 +59,6 @@ public class NewsAPI {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getNewsById(@PathParam("id") int id) {
         NewsDTO dto = newsService.getNewsById(id);
-        List<ImageDTO> listImage = imgService.getImagesByNewsId(id);
-        dto.getListImages().addAll(listImage);
         if (dto.getTitle() == null) {
             return Response.noContent().build();
         }
@@ -76,36 +68,31 @@ public class NewsAPI {
     // pagination 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response getNewsPagination(@QueryParam("page") int page, @QueryParam("numOfNews") int numberOfNews) {
         List<NewsDTO> newsList = newsService.getNewsPagiantion(page, numberOfNews);
         if (newsList == null || newsList.isEmpty()) {
             return Response.ok(new ArrayList(), MediaType.APPLICATION_JSON).build();
         }
-        for (NewsDTO news : newsList) {
-            List<ImageDTO> listImage = imgService.getImagesByNewsId(news.getId());
-            if (!listImage.isEmpty()) {
-                news.getListImages().add(listImage.get(0));
-            }
-        }
         return Response.ok(newsList, MediaType.APPLICATION_JSON).build();
     }
 
-    //Get by category
-    @POST
+    //Get all news by category
+    @GET
+    @Path("category-all/{cateId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response getNewsByCategory(NewsCategoryEntity cate, @QueryParam("page") int page, @QueryParam("numOfNews") int numberOfNews) {
-        List<NewsDTO> newsList = newsService.getNewsByCategoryPagination(cate.getId(), page, numberOfNews);
+    public Response getAllNewsByCategory(@PathParam("cateId") int cateId) {
+        return Response.ok(newsService.getAllNewsByCategoryPagination(cateId), MediaType.APPLICATION_JSON).build();
+    }
+    //Get by category
+    @GET
+    @Path("category/{cateId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsByCategory(@PathParam("cateId") int cateId, @QueryParam("page") int page, @QueryParam("numOfNews") int numberOfNews) {
+        List<NewsDTO> newsList = newsService.getNewsByCategoryPagination(cateId, page, numberOfNews);
         if (newsList == null || newsList.isEmpty()) {
             return Response.ok(new ArrayList(), MediaType.APPLICATION_JSON).build();
         }
-        for (NewsDTO news : newsList) {
-            List<ImageDTO> listImage = imgService.getImagesByNewsId(news.getId());
-            if (!listImage.isEmpty()) {
-                news.getListImages().add(listImage.get(0));
-            }
-        }
+        
         return Response.ok(newsList, MediaType.APPLICATION_JSON).build();
     }
 
@@ -124,10 +111,10 @@ public class NewsAPI {
     }
 
     //update news by id
-    @PUT
+    @POST
     @Path("update/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)   
     public Response updateNews(@PathParam("id") int id, NewsDTO dto) {
         NewsDTO updated = newsService.updateNews(id, dto);
         if (dto == null || updated == null) {

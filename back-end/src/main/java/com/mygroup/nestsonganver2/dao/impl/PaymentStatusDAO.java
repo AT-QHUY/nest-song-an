@@ -40,5 +40,10 @@ public class PaymentStatusDAO extends AbstractDAO<PaymentStatusEntity> implement
         if(entityList == null) return null;
         return entityList.isEmpty() ? null : entityList.get(0);
     }
+
+    @Override
+    public int updateStatus(int id, int status) {
+        return update(PaymentStatusSQL.updateStatus, status, id);
+    }
     
 }

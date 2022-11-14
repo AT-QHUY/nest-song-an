@@ -20,11 +20,13 @@ import java.util.List;
  */
 public class CartService {
 
+    private UserService userService = UserService.getInstance();
     private BillService billService = BillService.getInstance();
     private BillDetailsService billDetailsService = BillDetailsService.getInstance();
     private ProductService productService = ProductService.getInstance();
     private BillDTO bill;
     private List<BillDetailsDTO> CartLineItems;
+    private MailService mailService = new MailService();
     private static CartService instance;
 
     public static CartService gettCartSerivce() {
@@ -65,7 +67,7 @@ public class CartService {
         return total;
     }
 
-    public BillDTO buy(UserDTO user) {
+    public BillDTO buy(UserDTO user) throws Exception {
         setCartBill(user.getId());
         setCartLineItems(this.bill.getId());
         this.bill.setDate(Date.valueOf(LocalDate.now()));
@@ -74,8 +76,10 @@ public class CartService {
         this.bill.setTotalPrice(calTotalPrice());
         this.bill.setEmpId(1);
         this.bill.setStatus(2);
-        this.bill.setPaymentStatusCodeId(user.getPaymentStatusCodeId());
+        this.bill.setPaymentStatusCodeId(1);
         if (billService.updateBill(this.bill.getId(), bill) > 0) {
+            UserDTO userDetail = userService.getUserById(user.getId(), user.getId(), "");
+            mailService.sendBill(userDetail.getUsername(), bill);
             BillDTO result = this.bill;
             this.bill = null;
             this.CartLineItems = null;
@@ -120,12 +124,14 @@ public class CartService {
                 item.setPrice(newPrice);
                 billDetailsService.updateBillDetails(item.getId(), item);
                 this.bill.setTotalPrice(calTotalPrice());
+                resetCartLineItems(this.bill.getId());
                 return this.CartLineItems;
             }
         }
         bd.setBillId(this.bill.getId());
+        float price = calculateTotalMoney(bd.getQuantity(), bd.getProduct().getDeal(), bd.getProduct().getBasePrice());
+        bd.setPrice(price);
         billDetailsService.insertNewBillDetails(bd);
-        this.CartLineItems.add(bd);
         resetCartLineItems(this.bill.getId());
         this.bill.setTotalPrice(calTotalPrice());
         return this.CartLineItems;

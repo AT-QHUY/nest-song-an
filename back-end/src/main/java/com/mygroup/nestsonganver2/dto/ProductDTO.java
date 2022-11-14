@@ -22,15 +22,15 @@ public class ProductDTO {
     private int cateId;
     private int status;
     private String image;
-    
+
     //value for dashboard
-    
     private int total;
 
     private List<ImageDTO> listImages = new ArrayList<>();
-    
-     private List<String> listStringImages = new ArrayList<>();
 
+    private List<String> listStringImages = new ArrayList<>();
+
+    private float star;
 
     public ProductDTO() {
     }
@@ -142,6 +142,13 @@ public class ProductDTO {
         this.total = total;
     }
 
-    
+    public float getStar() {
+        return star;
+    }
+
+    public void setStar(float star) {
+        this.star = star;
+    }
+
     
 }

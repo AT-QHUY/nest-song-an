@@ -15,36 +15,67 @@ import java.util.List;
  *
  * @author dd220
  */
-public class NewsCategoryDAO extends AbstractDAO<NewsCategoryEntity> implements INewsCategoryDAO{
+public class NewsCategoryDAO extends AbstractDAO<NewsCategoryEntity> implements INewsCategoryDAO {
 
     private NewsCategoryMapper mapper = new NewsCategoryMapper();
-    
+
     private static NewsCategoryDAO instance = null;
-    public static NewsCategoryDAO getNewsCategoryDAO(){
-        if (instance == null)
+
+    public static NewsCategoryDAO getNewsCategoryDAO() {
+        if (instance == null) {
             instance = new NewsCategoryDAO();
+        }
         return instance;
     }
-    
-    private NewsCategoryDAO(){}
-    
+
+    private NewsCategoryDAO() {
+    }
+
     @Override
     public List<NewsCategoryEntity> findAllNewsCategory() {
         List<NewsCategoryEntity> list = query(NewsCategorySQL.findAll, mapper);
-        if (!list.isEmpty())return list;
+        if (!list.isEmpty()) {
+            return list;
+        }
         return new ArrayList();
     }
 
     @Override
     public NewsCategoryEntity findNewsCategoryByID(int id) {
         List<NewsCategoryEntity> list = query(NewsCategorySQL.findByID, mapper, id);
-        if (!list.isEmpty()) return list.get(0);
-        return null;
+        if (list == null) return null;
+        if (list.isEmpty()) return null;
+        return list.get(0);
     }
 
     @Override
     public NewsCategoryEntity addNewsCategoryEntity(NewsCategoryEntity entity) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<NewsCategoryEntity> added = query(NewsCategorySQL.add, mapper, entity.getTitle());
+        if (added == null) {
+            return null;
+        }
+        if (added.isEmpty()) {
+            return null;
+        }
+        return added.get(0);
     }
-    
+
+    public NewsCategoryEntity updateCategoryOfNews(NewsCategoryEntity cate) {
+        List<NewsCategoryEntity> updated = query(NewsCategorySQL.update, mapper, cate.getTitle(), cate.getId());
+        if (updated == null) {
+            return null;
+        }
+        if (updated.isEmpty()) {
+            return null;
+        }
+        return updated.get(0);
+    }
+
+    public NewsCategoryEntity deleteCategoryOfNews(int id) {
+        List<NewsCategoryEntity> deleted = query(NewsCategorySQL.delete, mapper, id);
+        if (deleted == null) return null;
+        if (deleted.isEmpty()) return null;
+        return deleted.get(0);
+    }
+
 }

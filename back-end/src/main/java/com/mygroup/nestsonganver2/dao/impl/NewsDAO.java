@@ -11,6 +11,7 @@ import com.mygroup.nestsonganver2.mapper.NewsMapper;
 import com.mygroup.nestsonganver2.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class NewsDAO extends AbstractDAO<NewsEntity> implements INewsDAO {
                 return list;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println(ex);
         }
         return new ArrayList<>();
     }
@@ -102,7 +103,7 @@ public class NewsDAO extends AbstractDAO<NewsEntity> implements INewsDAO {
     @Override
     public int deleteNews(int id) {
         int check = 0;
-        Connection cnn = null;
+        Connection cnn;
         try {
             cnn = Utils.makeConnection();
             if (cnn != null) {
@@ -111,7 +112,7 @@ public class NewsDAO extends AbstractDAO<NewsEntity> implements INewsDAO {
                 ps.setInt(1, id);
                 check = ps.executeUpdate();
             }
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             System.out.println(ex);
         }
         return check;
