@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import AppTable from "../../../components/Table";
@@ -8,6 +8,7 @@ import { useGetBillStatus, useGetOrderByStatusId } from "./api/hook";
 import { convertMsToDate } from "../../../utils/serverUtils";
 import { useGetUserById } from "../user/api/hooks";
 import { DropDown } from "../../../components/Dropdown";
+import { billApi } from "../../../api/billApi";
 
 export function Orders() {
   const [page, setPage] = useState(0);
@@ -16,11 +17,16 @@ export function Orders() {
     id: 2,
     name: "Đang xử lí",
   });
-  const { data, error, loading } = useGetOrderByStatusId(status.id);
+  const [isRerender, setIsRerender] = useState(false);
+  const { data, error, loading } = useGetOrderByStatusId({
+    status: status.id,
+    isRerender: isRerender,
+  });
   const navigate = useNavigate();
   const GetUserName = (id) => {
     return useGetUserById(id).data.fullname;
   };
+
   useEffect(() => {}, [status]);
   const columns = useMemo(() => {
     return [
@@ -28,14 +34,14 @@ export function Orders() {
         field: "customerId",
         headerName: "Tên khách hàng",
         width: 300,
-        renderCell: ({ value }) => {
+        renderCell: ({ value, row }) => {
           return <span>{GetUserName(value)} </span>;
         },
       },
       {
         field: "date",
         headerName: "Ngày mua hàng",
-        width: 350,
+        width: 150,
         renderCell: ({ value }) => {
           return <span>{convertMsToDate(value)} </span>;
         },
@@ -57,32 +63,65 @@ export function Orders() {
         },
       },
       {
+        field: "status",
+        headerName: "Trạng thái",
+        width: 200,
+        renderCell: ({ value, row }) => {
+          return (
+            <span>
+              {row.status ? statusList[row.status - 1].name : "Undefined"}
+            </span>
+          );
+        },
+      },
+      {
         field: "id",
         headerName: "Action",
-        width: 150,
-        renderCell: ({ value }) => {
+        width: 200,
+        renderCell: ({ value, row }) => {
           return (
-            <AppButton
-              onClick={(e) => {
-                navigate(`/dashboard/order/detail/${value}`);
-                e.stopPropagation();
-              }}
-              style={{ textTransform: "capitalize" }}
+            <Box
+              display={"flex"}
+              flexDirection={"rows"}
+              alignItems={"center"}
+              width={"100%"}
+              justifyContent={"space-between"}
             >
-              Chi tiết
-            </AppButton>
+              <AppButton
+                onClick={(e) => {
+                  navigate(`/dashboard/order/detail/${value}`);
+                  e.stopPropagation();
+                }}
+                style={{ textTransform: "capitalize" }}
+              >
+                Chi tiết
+              </AppButton>
+              <Button
+                onClick={(e) => {
+                  billApi
+                    .updateBillById(value, 3)
+                    .then(() => setIsRerender(!isRerender))
+                    .catch((err) => console.log(err));
+                }}
+                sx={{ display: row.status === 2 ? "" : "none" }}
+                variant={"contained"}
+                style={{ textTransform: "capitalize" }}
+              >
+                Đã giao
+              </Button>
+            </Box>
           );
         },
       },
     ];
-  }, []);
+  }, [status, statusList]);
 
   if (loading) return <Loading />;
 
   if (error) return <Navigate to="404" />;
 
   return (
-    <Box marginBottom={8}>
+    <>
       <Grid item variant="outlined" style={{ display: "flex" }}>
         {/* For search & Filter */}
         <Paper
@@ -109,6 +148,7 @@ export function Orders() {
       </Grid>
       <Grid
         item
+        marginBottom={"52px"}
         sx={{ width: "100%" }}
         variant="outlined"
         style={{ display: "flex" }}
@@ -123,6 +163,6 @@ export function Orders() {
           />
         </Paper>
       </Grid>
-    </Box>
+    </>
   );
 }

@@ -5,7 +5,7 @@ import { billApi } from "../../../../api/billApi";
 import { userApi } from "../../../../api/userApi";
 
 
-export const useGetOrderByStatusId = (status= 2, skipFetch = false ) => {
+export const useGetOrderByStatusId = ({status= 2, skipFetch = false, isRerender} ) => {
   
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -14,8 +14,13 @@ export const useGetOrderByStatusId = (status= 2, skipFetch = false ) => {
     const getOrdersByStatus = async (status) => {
         setLoading(true)
         try {
-
-            const response = await billApi.getBillByStatus(status)
+            var response;
+            if(status === 0 ) {
+                response = await billApi.getAllBill()
+            }
+            else{
+                response = await billApi.getBillByStatus(status)
+            }
             setOrders(response)
 
         } catch (error) {
@@ -34,7 +39,7 @@ export const useGetOrderByStatusId = (status= 2, skipFetch = false ) => {
         if (!skipFetch) {
             getOrdersByStatus(status);
         }
-    }, [status]);
+    }, [status, isRerender]);
 
 
     return {
@@ -157,6 +162,45 @@ export const useGetUserData = (id, skipFetch = false ) => {
 
     return {
         data: user,
+        loading,
+        error,
+    }
+
+}
+
+export const useGetTotalPriceByMonth = ( skipFetch = false ) => {
+  
+    const [bill, setBill] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("")
+
+    const getPriceByMonth = async () => {
+        setLoading(true)
+        try {
+            const response = await billApi.getTotalPriceByMonth()
+            setBill(response)
+
+        } catch (error) {
+            if (error.response.status < 500) {
+                console.log(error);
+                setError("Không tìm thấy sản phẩm")
+                return;
+            }
+            setError("Internal Server Error")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if (!skipFetch) {
+            getPriceByMonth();
+        }
+    }, []);
+
+
+    return {
+        data: bill,
         loading,
         error,
     }

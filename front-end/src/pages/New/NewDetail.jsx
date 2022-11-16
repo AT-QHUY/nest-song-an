@@ -72,22 +72,24 @@ export const NewDetail = () => {
                                         className="max-h-64 m-4 text-left"
                                     >
                                         <div className="flex">
-                                            <Link
-                                                to={`/new/${card.id}`}
-                                                className="rounded-sm w-5/12"
-                                                onClick={() =>
-                                                    window.scrollTo(0, 0)
-                                                }
-                                            >
-                                                <img
-                                                    src={
-                                                        card.listImages[0]
-                                                            .imgPath
+                                            <div className="overflow-hidden">
+                                                <Link
+                                                    to={`/new/${card.id}`}
+                                                    className="rounded-sm w-5/12 "
+                                                    onClick={() =>
+                                                        window.scrollTo(0, 0)
                                                     }
-                                                    alt={card.title}
-                                                    className="aspect-square object-cover"
-                                                />
-                                            </Link>
+                                                >
+                                                    <img
+                                                        src={
+                                                            card.listImages[0]
+                                                                .imgPath
+                                                        }
+                                                        alt={card.title}
+                                                        className="aspect-square w-44 object-cover"
+                                                    />
+                                                </Link>
+                                            </div>
                                             <div className="text-xs w-7/12">
                                                 <Link
                                                     to={`/new/${card.id}`}

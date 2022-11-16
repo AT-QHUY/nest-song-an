@@ -4,19 +4,21 @@ import { useNavigate } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { productApi } from "../../../api/productApi";
 import { AppButton } from "../../../components/Button";
-import { AppForm } from "../../../components/Form";
+import { AppForm, FIELD_TYPES } from "../../../components/Form";
 import { getOptions } from "../../../utils/getOptions";
 import { useGetCategories } from "./api/hooks";
+import { useState } from "react";
 
 export function CreateProduct() {
   const navigate = useNavigate();
+
   const methods = useForm({
     defaultValues: {
       cateId: "1",
     },
   });
   const { data: categories, loading: loadingCategories } = useGetCategories({});
-
+  const [listImages, setListImages] = useState([]);
   const { handleSubmit, setValue } = methods;
 
   const fields = useMemo(() => {
@@ -37,39 +39,24 @@ export function CreateProduct() {
         },
       },
       {
-        type: "text",
+        type: FIELD_TYPES.IMAGE_UPLOAD,
         fieldProps: {
-          label: "Hình ảnh-1",
+          images: listImages,
+          title: "Danh sách hình ảnh",
+          max: 5,
+          setListImages: setListImages,
+          setValue: setValue,
         },
         formProps: {
-          name: "image1",
+          name: "image",
           rules: {
-            required: "Trường này là bắt buộc",
+            validate: () => {
+              const isEmpty = listImages.length === 0;
+              if (isEmpty) {
+                return "Trường này là bắt buộc";
+              }
+            },
           },
-        },
-        cols: {
-          xs: 12,
-        },
-      },
-      {
-        type: "text",
-        fieldProps: {
-          label: "Hình ảnh-2",
-        },
-        formProps: {
-          name: "image2",
-        },
-        cols: {
-          xs: 12,
-        },
-      },
-      {
-        type: "text",
-        fieldProps: {
-          label: "Hình ảnh-3",
-        },
-        formProps: {
-          name: "image3",
         },
         cols: {
           xs: 12,
@@ -157,28 +144,17 @@ export function CreateProduct() {
         },
       },
     ];
-  }, [categories]);
+  }, [categories, listImages]);
 
   const onSubmit = (values) => {
-    const data = {
-      name: values.name,
-      quantity: values.quantity,
-      deal: values.deal,
-      description: values.description,
-      basePrice: values.basePrice,
-      cateId: values.cateId,
-      status: 1,
-      listStringImages: [values.image1],
-    };
-    if (values.image2 != undefined) data.listStringImages.push(values.image2);
-    if (values.image3 != undefined) data.listStringImages.push(values.image3);
+    const data = { ...values, listImages: listImages };
     productApi
       .addProductAPI(data)
       .then(() => navigate("/dashboard/product"))
       .catch((err) => console.log(err));
   };
   return (
-    <Paper sx={{ padding: "24px" }}>
+    <Paper sx={{ padding: "24px", marginBottom: "60px" }}>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box container display={"flex"} justifyContent={"center"}>
@@ -192,7 +168,7 @@ export function CreateProduct() {
                     color: "var(--bs-secondary)",
                   }}
                 >
-                  Create Product
+                  Thêm mới Sản Phẩm
                 </Typography>
               </Box>
               <AppForm fields={fields} />
@@ -202,7 +178,7 @@ export function CreateProduct() {
                   variant="outlined"
                   style={{ marginBlock: "24px" }}
                 >
-                  Create
+                  Tạo mới
                 </AppButton>
               </Box>
             </Box>

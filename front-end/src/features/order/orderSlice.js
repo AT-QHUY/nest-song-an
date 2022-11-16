@@ -19,6 +19,13 @@ export const orderSlice = createSlice({
             state.loading = false;
             state.errorMessage = action.payload;
         },
+        ORDER_CANCEL: (state, action) => {
+            const index = state.data.findIndex(
+                (bill) => bill.id === action.payload
+            );
+            state.data[index].status = 4;
+            state.loading = false;
+        },
         ORDER_CLEAR: (state) => {
             state.data = null;
         },
@@ -29,6 +36,7 @@ export const {
     ORDER_LOADING,
     ORDER_LOADING_SUCCESS,
     ORDER_LOADING_FAIL,
+    ORDER_CANCEL,
     ORDER_CLEAR,
 } = orderSlice.actions;
 

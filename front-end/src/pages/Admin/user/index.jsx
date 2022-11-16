@@ -7,6 +7,8 @@ import { useGetUsersCount, useGetUsersPagination } from "./api/hooks";
 import { Loading } from "../../../components/Loading/Loading";
 import { AppButton } from "../../../components/Button";
 import { convertMsToDate } from "../../../utils/serverUtils";
+import { userApi } from "../../../api/userApi";
+import { accountApi } from "../../../api/accountApi";
 
 export function Users() {
   const [page, setPage] = useState(0);
@@ -15,12 +17,17 @@ export function Users() {
   const { data, error, loading } = useGetUsersPagination({
     offset: page + 1,
     limit: pageSize,
+    isRerender: isRerender,
   });
   const { data: count } = useGetUsersCount({});
   const navigate = useNavigate();
-  const handleStatusChange = (id) => {
-    setRerender(!isRerender);
-    console.log(1);
+  const handleStatusChange = (id, status) => {
+    accountApi
+      .changeStatus(id, status)
+      .then(() => {
+        setRerender((current) => !current);
+      })
+      .catch((err) => console.log(err));
   };
 
   const columns = useMemo(() => {
@@ -30,7 +37,7 @@ export function Users() {
       {
         field: "dateOfBirth",
         headerName: "Ngày sinh",
-        width: 350,
+        width: 200,
         renderCell: ({ value }) => {
           return <span>{convertMsToDate(value)} </span>;
         },
@@ -41,31 +48,55 @@ export function Users() {
         headerName: "Trạng thái",
         width: 150,
         renderCell: ({ value }) => {
-          return <span>{value === 0 ? "Đang ẩn" : "Hoạt động"} </span>;
+          const data = {
+            color: value === 1 ? "green" : "red",
+          };
+          return (
+            <span style={{ color: data.color }}>
+              {value === 0 ? "Đang ẩn" : "Hoạt động"}{" "}
+            </span>
+          );
+        },
+      },
+      {
+        field: "role",
+        headerName: "Chức vụ",
+        width: 150,
+        renderCell: ({ value }) => {
+          return <span>{value.id === 2 ? "Khách hàng" : "Quản lí"} </span>;
         },
       },
       {
         field: "id",
         headerName: "Action",
         width: 150,
-        renderCell: ({ value }) => {
+        renderCell: ({ value, row }) => {
+          const data = {
+            isCustomer: row.role.id === 2,
+            isActive: row.status === 1,
+            color: row.status === 1 ? "error" : "success",
+          };
           return (
-            <AppButton
+            <Button
               onClick={(e) => {
-                handleStatusChange();
-                e.stopPropagation();
+                if (data.isActive) {
+                  handleStatusChange(value, 0);
+                } else {
+                  handleStatusChange(value, 1);
+                }
               }}
+              variant={"contained"}
+              color={data.color}
               style={{ textTransform: "capitalize" }}
+              sx={{ display: data.isCustomer ? "" : "none" }}
             >
-              Chuyển trạng thái
-            </AppButton>
+              {data.isActive ? "Ẩn người dùng" : "Hiện người dùng"}
+            </Button>
           );
         },
       },
     ];
   }, []);
-
-  if (loading) return <Loading />;
 
   if (error) return <Navigate to="404" />;
 
@@ -91,7 +122,7 @@ export function Users() {
       </Grid>
       <Grid
         item
-        sx={{ width: "100%" }}
+        sx={{ width: "100%", marginBottom: "40px" }}
         variant="outlined"
         style={{ display: "flex" }}
       >

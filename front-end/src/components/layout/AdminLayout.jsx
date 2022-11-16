@@ -18,20 +18,18 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import ArticleIcon from "@mui/icons-material/Article";
+import Person2Icon from "@mui/icons-material/Person2";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
+import { Grid } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { productApi } from "../../api/productApi";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import BasicMenu from "../Menu";
+import Logo from "../../assets/icons/SongAnLogo.png";
 
 const drawerWidth = 240;
 
@@ -102,10 +100,11 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function AdminLayout({ children, setRerender }) {
+  const navigate = useNavigate();
   const theme = useTheme();
   const [cateList, setCateList] = useState([]);
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("User");
+  const [title, setTitle] = useState("Thống kê");
 
   useEffect(() => {
     const fetchCategory = async () => {
@@ -122,64 +121,32 @@ export default function AdminLayout({ children, setRerender }) {
   const inputArray = useMemo(() => {
     return [
       {
-        name: "image",
-        label: "Hình ảnh",
-        type: "text",
-        values: "",
-        rules: { required: "Truong nay la bat buoc" },
+        name: "Thống kê",
+        icon: <DashboardIcon />,
+        url: "/dashboard",
       },
       {
-        name: "name",
-        label: "Tên",
-        values: "",
-        type: "text",
-        rules: { required: "Truong nay la bat buoc" },
+        name: "Đơn hàng",
+        icon: <LocalOfferIcon />,
+        url: "/dashboard/order",
       },
       {
-        name: "description",
-        label: "Mô tả",
-        values: "",
-        type: "text",
-        rules: { required: "Truong nay la bat buoc" },
+        name: "Sản phẩm",
+        icon: <Inventory2Icon />,
+        url: "/dashboard/product",
       },
       {
-        name: "basePrice",
-        label: "Giá",
-        values: "",
-        type: "number",
-        rules: { required: "Truong nay la bat buoc" },
+        name: "Người dùng",
+        icon: <Person2Icon width={"36px"} />,
+        url: "/dashboard/user",
       },
       {
-        name: "quantity",
-        label: "Số lượng",
-        type: "number",
-        values: "",
-        rules: { required: "Truong nay la bat buoc" },
-      },
-      {
-        name: "cateId",
-        label: "Loại",
-        type: "select",
-        values: cateList,
-        rules: { required: "Truong nay la bat buoc" },
-      },
-      {
-        name: "deal",
-        label: "Khuyến mãi",
-        type: "number",
-        values: "",
-        rules: {
-          required: "Truong nay la bat buoc",
-          validate: (value) => {
-            const dealRule = +value >= 1 || +value < 0;
-            if (dealRule) {
-              return "Khuyến mãi phải < 1 và >= 0!";
-            }
-          },
-        },
+        name: "Tin tức",
+        icon: <ArticleIcon />,
+        url: "/dashboard/news",
       },
     ];
-  }, [cateList]);
+  }, []);
   const {
     control,
     handleSubmit,
@@ -238,7 +205,12 @@ export default function AdminLayout({ children, setRerender }) {
               width: "100%",
             }}
           >
-            <Typography variant="h6" noWrap component="div">
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ fontWeight: "600" }}
+            >
               {title}
             </Typography>
             <Box sx={{ display: "flex" }}>
@@ -263,6 +235,16 @@ export default function AdminLayout({ children, setRerender }) {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
+            <Box
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <img style={{ maxWidth: "48px" }} src={Logo} />
+              <Typography sx={{ fontWeight: 600, paddingRight: "40px" }}>
+                NestSongAn
+              </Typography>
+            </Box>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
             ) : (
@@ -272,11 +254,12 @@ export default function AdminLayout({ children, setRerender }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {["User", "Product", "Order"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+          {inputArray.map((item, index) => (
+            <ListItem key={item.name} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 onClick={() => {
-                  setTitle(text);
+                  setTitle(item.name);
+                  navigate(item.url);
                 }}
                 sx={{
                   minHeight: 48,
@@ -291,9 +274,19 @@ export default function AdminLayout({ children, setRerender }) {
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {item.icon}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    fontWeight: 600,
+                  }}
+                  primary={
+                    <Typography sx={{ fontWeight: 600, fontSize: "16px" }}>
+                      {item.name}
+                    </Typography>
+                  }
+                />
               </ListItemButton>
             </ListItem>
           ))}

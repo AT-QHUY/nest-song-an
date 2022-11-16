@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
+import { InputImageList } from "../ImageList";
 
 const renderTextField = ({ fieldProps, controllerProps }) => {
   return (
@@ -152,7 +153,38 @@ const renderUpload = ({ fieldProps, controllerProps }) => {
   );
 };
 
-const FIELD_TYPES = {
+const renderMultipleUpload = ({ fieldProps, controllerProps }) => {
+  const { setValue, images, setListImages, title, max, ...restFieldProps } =
+    fieldProps;
+  return (
+    <Controller
+      {...controllerProps}
+      render={({ field: { onChange, value, ...rest } }) => {
+        return (
+          <FormControl fullWidth label={restFieldProps.label}>
+            <InputImageList
+              images={images}
+              title={title}
+              max={max}
+              setValue={setValue}
+              setListImages={setListImages}
+            />
+            {restFieldProps?.helperText && (
+              <FormHelperText
+                style={{ color: "var(--bs-danger)" }}
+                id="my-helper-text"
+              >
+                {restFieldProps?.helperText}
+              </FormHelperText>
+            )}
+          </FormControl>
+        );
+      }}
+    />
+  );
+};
+
+export const FIELD_TYPES = {
   TEXT: "text",
   SELECT: "select",
   AUTOCOMPLETE: "autocomplete",
@@ -160,6 +192,7 @@ const FIELD_TYPES = {
   MULTILINE: "multiline",
   LARGE_MULTILINE: "large_multiline",
   NUMBER: "number",
+  IMAGE_UPLOAD: "image_upload",
 };
 
 const FORM_MAPPING = {
@@ -170,6 +203,7 @@ const FORM_MAPPING = {
   [FIELD_TYPES.UPLOAD]: renderUpload,
   [FIELD_TYPES.LARGE_MULTILINE]: renderLargeMultiline,
   [FIELD_TYPES.NUMBER]: renderNumber,
+  [FIELD_TYPES.IMAGE_UPLOAD]: renderMultipleUpload,
 };
 
 export const AppForm = ({ fields }) => {

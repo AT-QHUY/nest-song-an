@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { userApi } from "../../../../api/userApi";
 
-export const useGetUsersPagination = ({ offset = 1, limit = 5, skipFetch = false }) => {
+export const useGetUsersPagination = ({ offset = 1, limit = 5, skipFetch = false,isRerender }) => {
 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -31,7 +31,83 @@ export const useGetUsersPagination = ({ offset = 1, limit = 5, skipFetch = false
         if (!skipFetch) {
             getUsers({ offset, limit });
         }
-    }, [offset, limit]);
+    }, [offset, limit, isRerender]);
+
+
+    return {
+        data: users,
+        loading,
+        error,
+    }
+
+}
+
+export const useGetRoles = ({skipFetch = false }) => {
+
+    const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("")
+
+    const getRoles = async () => {
+        setLoading(true)
+        try {
+            const response = await userApi.getRoles();
+            setRoles(response)
+
+        } catch (error) {
+            if (error.response.status < 500) {
+                setError("Không tìm thấy sản phẩm")
+                return;
+            }
+            setError("Internal Server Error")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if (!skipFetch) {
+            getRoles();
+        }
+    }, []);
+
+
+    return {
+        data: roles,
+        loading,
+        error,
+    }
+
+}
+
+export const useGetUsers = ({skipFetch = false }) => {
+
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("")
+
+    const getUsers = async () => {
+        setLoading(true)
+        try {
+            const response = await userApi.getAll()
+            setUsers(response)
+
+        } catch (error) {
+            if (error.response.status < 500) {
+                setError("Không tìm thấy sản phẩm")
+                return;
+            }
+            setError("Internal Server Error")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if (!skipFetch) {
+            getUsers();
+        }
+    }, []);
 
 
     return {

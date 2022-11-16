@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Loading } from "../../components/Loading/Loading";
 import { billApi } from "../../api/billApi";
 import {
+    ORDER_CANCEL,
     ORDER_LOADING,
     ORDER_LOADING_FAIL,
     ORDER_LOADING_SUCCESS,
@@ -31,6 +32,7 @@ const ButtonOrder = ({ type, children, step, setStep }) => {
 
 export const Order = () => {
     const [step, setStep] = useState("All");
+    const [reRender, setReRender] = useState(false);
     const user = useSelector(selectUser);
     const order = useSelector(selectOrder);
     const dispatch = useDispatch();
@@ -47,9 +49,10 @@ export const Order = () => {
                 dispatch(ORDER_LOADING_FAIL(errorMessage));
             }
         };
-        if (user.token) FetchOrder();
-        else navigate("/sign-in", { state: { alertNotLogin: true } });
-    }, [user]);
+        if (user.token) {
+            FetchOrder();
+        } else navigate("/sign-in", { state: { alertNotLogin: true } });
+    }, [user, reRender]);
 
     let orders = [];
     if (order.data !== null) {
@@ -63,7 +66,24 @@ export const Order = () => {
 
         if (step === "Cancel")
             orders = [...order.data].filter((ord) => ord.status === 4);
+        // orders.reverse();
     }
+
+    const handleCancelOrder = async (billId) => {
+        try {
+            dispatch(ORDER_LOADING());
+            const response = await billApi.cancelBill(billId);
+            console.log(response);
+            dispatch(ORDER_CANCEL(billId));
+            setReRender(true);
+        } catch (error) {
+            const errorMessage = getErrorMessageFromServer(error);
+            console.log(error);
+            dispatch(ORDER_LOADING_FAIL(errorMessage));
+        }
+    };
+
+    if (reRender) setReRender(false);
 
     return (
         <div className="bg-gray-200 min-h-[100vh] pt-28">
@@ -99,27 +119,14 @@ export const Order = () => {
                     <div className="mt-4">Bạn không có đơn hàng nào</div>
                 </div>
             ) : (
-                <div className="px-44 min-h-[66.9vh]">
+                <div className="px-44 min-h-[66.9vh] mb-20">
                     {orders.map((card, index) => (
-                        <OrderCard card={card} key={index} />
+                        <OrderCard
+                            card={card}
+                            key={index}
+                            handleCancelOrder={handleCancelOrder}
+                        />
                     ))}
-                    {/* {order.data.map((card, index) =>
-                        step === "All" ? (
-                            <OrderCard card={card} key={index} />
-                        ) : step === "Processing" ? (
-                            card.status === 2 && (
-                                <OrderCard card={card} key={index} />
-                            )
-                        ) : step === "Complete" ? (
-                            card.status === 3 && (
-                                <OrderCard card={card} key={index} />
-                            )
-                        ) : step === "Cancel" ? (
-                            card.status === 4 && (
-                                <OrderCard card={card} key={index} />
-                            )
-                        ) : null
-                    )} */}
                 </div>
             )}
             <Footer />

@@ -12,17 +12,23 @@ export const billApi = {
     getOrderByPage: (offset, limit) => {
         return adminAxios.get(`/bill/page?page=${offset}&limit=${limit}`);
     },
+    getAllBill: () => {
+        return adminAxios.get(`/bill`);
+    },
     getBillByBillId: (bill_id) => {
         return adminAxios.get(`/bill/${bill_id}`);
     },
-    getBillStatus: () =>{
-        return adminAxios.get("/bill_status")
+    getBillStatus: () => {
+        return adminAxios.get("/bill_status");
     },
     getBillByStatus: (status) => {
-        return adminAxios.get(`/bill/status/${status}`)
+        return adminAxios.get(`/bill/status/${status}`);
     },
     payment: (data) => {
         return adminAxios.post("/cart/buy/customer", data);
+    },
+    getTotalPriceByMonth:()=>{
+        return adminAxios.get("bill/total-by-month");
     },
     addToCart: (userId, product, quantity) => {
         const data = {
@@ -42,5 +48,18 @@ export const billApi = {
         return adminAxios.delete(
             `/cart/cart-line-items/user?userId=${userId}&id=${billId}`
         );
+    },
+    updateBillById: async (id, status) => {
+        try {
+            const res = await adminAxios.put(
+                `/bill/update-status?id=${id}&status=${status}`
+            );
+            return res;
+        } catch (err) {
+            throw err;
+        }
+    },
+    cancelBill: (billId) => {
+        return adminAxios.delete(`bill/delete/${billId}`);
     },
 };

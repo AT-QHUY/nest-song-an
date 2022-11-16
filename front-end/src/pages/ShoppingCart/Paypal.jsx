@@ -31,16 +31,20 @@ export const Paypal = ({ totalPrice, setStep }) => {
                     });
                 },
                 onApprove: async (data, actions) => {
-                    const order = await actions.order.capture();
-                    // console.log(order);
-                    if (order.status === "COMPLETED") {
-                        dispatch(CART_LOADING_REQUEST());
-                        const response = await billApi.payment({
-                            ...cart.shipInfor,
-                            paymentStatusCodeId: 2,
-                        });
-                        dispatch(CART_PAYING_SUCCESS());
-                        setStep("receipt");
+                    try {
+                        const order = await actions.order.capture();
+                        // console.log(order);
+                        if (order.status === "COMPLETED") {
+                            dispatch(CART_LOADING_REQUEST());
+                            const response = await billApi.payment({
+                                ...cart.shipInfor,
+                                paymentStatusCodeId: 2,
+                            });
+                            dispatch(CART_PAYING_SUCCESS());
+                            setStep("receipt");
+                        }
+                    } catch (error) {
+                        console.log(error);
                     }
                 },
                 onError: (err) => {
@@ -52,7 +56,7 @@ export const Paypal = ({ totalPrice, setStep }) => {
 
     return (
         <div>
-            <div ref={paypal}></div>
+            <div ref={paypal} className="w-[22rem]"></div>
         </div>
     );
 };

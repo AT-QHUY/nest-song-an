@@ -1,6 +1,6 @@
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Skeleton } from "@mui/material";
+import { CircularProgress, Skeleton } from "@mui/material";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { convertPriceToString } from "../../utils/serverUtils";
@@ -29,112 +29,113 @@ export const CartItem = ({ item, handleChangeAmount, handleDelete }) => {
 
     return (
         <>
-            {loading ? (
-                <div className="grid grid-cols-12 gap-6 items-center">
-                    <div className="col-span-5 grid grid-cols-12">
+            <div className=" bg-white relative items-center my-6 transition-all duration-700">
+                <ul className="grid grid-cols-12 grid-flow-row-dense text-center text-base font-normal text-zinc-500 items-center">
+                    <li className="col-span-5 grid grid-cols-12 justify-self-start items-center">
                         <div className="col-span-3">
-                            <Skeleton height={182} animation="wave" />
+                            <Link
+                                to={`/production/${item.product.id}`}
+                                onClick={() => window.scrollTo(0, 0)}
+                            >
+                                <img
+                                    src={item.product.listImages[0].imgPath}
+                                    className="aspect-square rounded-xs"
+                                />
+                            </Link>
                         </div>
-                        <div className="col-span-9 ml-8">
-                            <Skeleton height={182} animation="wave" />
-                        </div>
-                    </div>
-                    <div className="col-span-2">
-                        <Skeleton height={182} animation="wave" />
-                    </div>
-                    <div className="col-span-2">
-                        <Skeleton height={182} animation="wave" />
-                    </div>
-                    <div className="col-span-2">
-                        <Skeleton height={182} animation="wave" />
-                    </div>
-                    <div className="text-zinc-500 h-fit px-3 py-1.5 col-span-1 ml-[0.8rem] mb-0.5 cursor-pointer hover:text-zinc-300">
-                        &#10006;
-                    </div>
-                </div>
-            ) : (
-                <div className=" bg-white relative items-center my-6">
-                    <ul className="grid grid-cols-12 grid-flow-row-dense text-center text-base font-normal text-zinc-500 items-center">
-                        <li className="col-span-5 grid grid-cols-12 justify-self-start items-center">
-                            <div className="col-span-3">
-                                <Link
-                                    to={`/production/${item.product.id}`}
-                                    onClick={() => window.scrollTo(0, 0)}
-                                >
-                                    <img
-                                        src={item.product.listImages[0].imgPath}
-                                        className="aspect-square rounded-xs"
-                                    />
-                                </Link>
-                            </div>
-                            <div className="col-span-9 ml-6">
-                                <Link
-                                    to={`/production/${item.product.id}`}
-                                    onClick={() => window.scrollTo(0, 0)}
-                                >
-                                    <div className="text-base uppercase font-bold text-left">
-                                        {item.product.name}
-                                    </div>
-                                </Link>
-                                <div className="truncate text-xs">
-                                    {item.product.description}
+                        <div className="col-span-9 ml-6">
+                            <Link
+                                to={`/production/${item.product.id}`}
+                                onClick={() => window.scrollTo(0, 0)}
+                            >
+                                <div className="text-base uppercase font-bold text-left">
+                                    {item.product.name}
                                 </div>
+                            </Link>
+                            <div className="truncate text-xs">
+                                {item.product.description}
                             </div>
-                        </li>
-                        <li className="col-span-2">Loại</li>
-                        <li className="col-span-2 font-trebu">
-                            <button className="hover:text-red-500">
-                                <FontAwesomeIcon
-                                    icon={faMinus}
-                                    onClick={() => {
-                                        if (!amount) return setAmount(1);
-                                        if (amount > 1)
-                                            return setAmount((pre) => pre - 1);
-                                    }}
-                                />
-                            </button>
-                            <input
-                                value={amount}
-                                type="number"
-                                className="w-8 text-center mx-2 font-bold"
-                                onChange={(e) => {
-                                    const number = Number.parseInt(
-                                        e.target.value
-                                    );
-                                    if (number > item.product.quantity)
-                                        number = item.product.quantity;
-                                    if (number < 1 || number == NaN) number = 1;
-                                    return setAmount(number);
+                        </div>
+                    </li>
+                    <li className="col-span-2">Loại</li>
+                    <li className="col-span-2 font-trebu">
+                        {loading ? (
+                            <CircularProgress
+                                size={28}
+                                sx={{
+                                    color: "#00ADB5",
                                 }}
-                                min="1"
-                                max={item.product.quantity}
-                                required
                             />
-                            <button className="hover:text-green-500">
-                                <FontAwesomeIcon
-                                    icon={faPlus}
-                                    onClick={() => {
-                                        if (!amount) return setAmount(1);
-                                        if (amount < item.product.quantity)
-                                            return setAmount((pre) => pre + 1);
+                        ) : (
+                            <>
+                                <button className="hover:text-red-500">
+                                    <FontAwesomeIcon
+                                        icon={faMinus}
+                                        onClick={() => {
+                                            if (!amount) return setAmount(1);
+                                            if (amount > 1)
+                                                return setAmount(
+                                                    (pre) => pre - 1
+                                                );
+                                        }}
+                                    />
+                                </button>
+                                <input
+                                    value={amount}
+                                    type="number"
+                                    className="w-8 text-center mx-2 font-bold"
+                                    onChange={(e) => {
+                                        const number = Number.parseInt(
+                                            e.target.value
+                                        );
+                                        if (number > item.product.quantity)
+                                            number = item.product.quantity;
+                                        if (number < 1 || number == NaN)
+                                            number = 1;
+                                        return setAmount(number);
                                     }}
+                                    min="1"
+                                    max={item.product.quantity}
+                                    required
                                 />
-                            </button>
-                        </li>
-                        <li className="col-span-2 font-trebu text-orange-500">
-                            {convertPriceToString(item.price)}
-                        </li>
-                        <li
-                            className="text-zinc-500 h-fit px-3 py-1.5 col-span-1 cursor-pointer hover:text-zinc-300"
-                            onClick={() =>
-                                setLoading(true, handleDelete(item, setLoading))
-                            }
-                        >
-                            &#10006;
-                        </li>
-                    </ul>
-                </div>
-            )}
+                                <button className="hover:text-green-500">
+                                    <FontAwesomeIcon
+                                        icon={faPlus}
+                                        onClick={() => {
+                                            if (!amount) return setAmount(1);
+                                            if (amount < item.product.quantity)
+                                                return setAmount(
+                                                    (pre) => pre + 1
+                                                );
+                                        }}
+                                    />
+                                </button>
+                            </>
+                        )}
+                    </li>
+                    <li className="col-span-2 font-trebu text-orange-500">
+                        {loading ? (
+                            <CircularProgress
+                                size={28}
+                                sx={{
+                                    color: "#00ADB5",
+                                }}
+                            />
+                        ) : (
+                            convertPriceToString(item.price * item.quantity)
+                        )}
+                    </li>
+                    <button
+                        className="text-red-400 h-fit px-3 py-1.5 col-span-1 cursor-pointer hover:text-red-600 hover:scale-125 transition-all duration-200 disabled:text-slate-200 disabled:cursor-default"
+                        onClick={() =>
+                            setLoading(true, handleDelete(item, setLoading))
+                        }
+                        disabled={loading}
+                    >
+                        &#10006;
+                    </button>
+                </ul>
+            </div>
         </>
     );
 };

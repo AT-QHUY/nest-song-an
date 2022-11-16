@@ -25,14 +25,18 @@ export const Payment = ({ setStep }) => {
 
     const handlePay = () => {
         const pay = async () => {
-            dispatch(CART_LOADING_REQUEST());
-            const response = await billApi.payment({
-                ...cart.shipInfor,
-                paymentStatusCodeId: method,
-            });
-            dispatch(CART_PAYING_SUCCESS());
-            setStep("receipt");
-            // console.log(response);
+            try {
+                dispatch(CART_LOADING_REQUEST());
+                const response = await billApi.payment({
+                    ...cart.shipInfor,
+                    paymentStatusCodeId: method,
+                });
+                dispatch(CART_PAYING_SUCCESS());
+                setStep("receipt");
+                // console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
         };
         if (method === 1) pay();
     };
@@ -62,35 +66,40 @@ export const Payment = ({ setStep }) => {
                     <div className="text-center text-4xl font-semibold">
                         Thanh toán
                     </div>
-                    <div className="text-center py-10 text-lg">
-                        <div>
-                            <FontAwesomeIcon icon={faLocationDot} /> Địa chỉ
-                            nhận hàng: {cart.shipInfor.address}
+                    <div className="flex mt-10 mb-7">
+                        <div className="text-left text-lg flex flex-col justify-around w-7/12 border gap-3 py-5 px-10">
+                            <div>
+                                <FontAwesomeIcon icon={faLocationDot} /> Địa chỉ
+                                nhận hàng: {cart.shipInfor.address}
+                            </div>
+                            <div>
+                                <FontAwesomeIcon icon={faPhone} /> Số điện thoại
+                                người nhận: {cart.shipInfor.phoneNumber}
+                            </div>
                         </div>
-                        <div>
-                            <FontAwesomeIcon icon={faPhone} /> Số điện thoại
-                            người nhận: {cart.shipInfor.phoneNumber}
-                        </div>
-                    </div>
 
-                    <div className="mr-0 ml-auto w-fit text-xl font-semibold">
-                        <span className=" ">Tổng tiền:</span>{" "}
-                        <span className="text-orange-500">
-                            {convertPriceToString(cart.totalPrice)} &#8363;
-                        </span>
-                    </div>
-                    <div className="border-2 flex gap-2 mt-2 mb-4 p-2 w-fit mr-0 ml-auto items-center">
-                        <p className="px-5 font-semibold">
-                            Phương thức thanh toán
-                        </p>
-                        <Select
-                            className="h-10 px-2 border-l-2 text-emerald-500"
-                            onChange={handleChange}
-                            defaultValue={1}
-                        >
-                            <MenuItem value={1}>Tiền mặt</MenuItem>
-                            <MenuItem value={2}>Paypal</MenuItem>
-                        </Select>
+                        <div className="w-5/12 text-right">
+                            <div className=" text-2xl font-semibold">
+                                <span className=" ">Tổng tiền:</span>{" "}
+                                <span className="text-orange-500">
+                                    {convertPriceToString(cart.totalPrice)}{" "}
+                                    &#8363;
+                                </span>
+                            </div>
+                            <div className="border-2 flex gap-2 mt-2 mb-4 p-2 w-fit mr-0 ml-auto items-center">
+                                <p className="px-5 font-semibold">
+                                    Phương thức thanh toán
+                                </p>
+                                <Select
+                                    className="h-10 px-2 border-l-2 text-emerald-500"
+                                    onChange={handleChange}
+                                    defaultValue={1}
+                                >
+                                    <MenuItem value={1}>Tiền mặt</MenuItem>
+                                    <MenuItem value={2}>Paypal</MenuItem>
+                                </Select>
+                            </div>
+                        </div>
                     </div>
                     <div className="flex justify-between pb-16">
                         <div

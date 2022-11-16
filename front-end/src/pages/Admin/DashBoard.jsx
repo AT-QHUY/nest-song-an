@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { ToastSuccess } from "../../components/Toast";
 import { Bar } from "react-chartjs-2";
+import { CountOnBill, ProductChart } from "../../components/Chart/ProductChart";
+import { UserChart } from "../../components/Chart/UserChart";
+import { BillChart } from "../../components/Chart/BillChart";
 
 export const DashBoard = () => {
   const [isRerender, setIsRerender] = useState(false);
@@ -12,21 +15,17 @@ export const DashBoard = () => {
 
   return (
     // <AdminLayout setRerender={setIsRerender}>
-    <Box>
-      {/* <ToastSuccess
+    <Box sx={{ marginBottom: "100px" }}>
+      <Box display={"flex"} flexDirection={"row"} justifyContent={"center"}>
+        {/* <ToastSuccess
         successToastStatus={successToastStatus}
         setSuccessToastStatus={setSuccessToastStatus}
       ></ToastSuccess> */}
-      <Bar
-        data={{
-          labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        }}
-        height={400}
-        width={600}
-        options={{
-          maintainAspectRatio: false,
-        }}
-      />
+        <ProductChart />
+        <BillChart />
+        {/* <UserChart /> */}
+      </Box>
+      <CountOnBill />
     </Box>
   );
 };

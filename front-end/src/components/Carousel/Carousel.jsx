@@ -65,7 +65,7 @@ export const Carousel = ({ data }) => {
                             {convertPriceToString(salePrice(item))} VNĐ
                         </p>
                     </div>
-                    <div className="absolute top-3 -right-0 bg-red-600 p-2 text-white font-semibold ">
+                    <div className="absolute top-7 right-0 bg-red-600 p-2 px-4 text-white font-semibold text-lg">
                         SALE {item.deal * 100}%
                     </div>
                 </SwiperSlide>

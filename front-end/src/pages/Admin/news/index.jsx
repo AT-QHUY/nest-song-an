@@ -12,16 +12,28 @@ export function News() {
   const [pageSize, setPageSize] = useState(10);
   const { data, error, loading } = useGetNews();
   const navigate = useNavigate();
-
   const columns = useMemo(() => {
     return [
       { field: "title", headerName: "Tiêu đề", width: 300 },
       {
         field: "listImages",
         headerName: "Hình ảnh",
+        width: 200,
+        renderCell: (values) => {
+          return (
+            <img
+              style={{ minWidth: 200 }}
+              src={values?.value ? values?.value[0]?.imgPath : ""}
+            ></img>
+          );
+        },
+      },
+      {
+        field: "cate",
+        headerName: "Loại",
         width: 150,
         renderCell: (values) => {
-          return <img src={values?.value ? values.value[0].imgPath : ""}></img>;
+          return <span>{values?.value?.title}</span>;
         },
       },
       { field: "shortDescription", headerName: "Mô tả ngắn", width: 350 },
@@ -29,7 +41,7 @@ export function News() {
       {
         field: "id",
         headerName: "Action",
-        width: 150,
+        width: 100,
         renderCell: ({ value }) => {
           return (
             <AppButton
@@ -88,7 +100,14 @@ export function News() {
         variant="outlined"
         style={{ display: "flex" }}
       >
-        <Paper sx={{ width: "100%", padding: "24px", height: "100%" }}>
+        <Paper
+          sx={{
+            width: "100%",
+            padding: "24px",
+            height: "100%",
+            marginBottom: "60px",
+          }}
+        >
           <AppTable
             data={data || []}
             columns={columns}

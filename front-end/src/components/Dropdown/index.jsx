@@ -43,6 +43,14 @@ export const DropDown = ({ itemList, setStatus, status }) => {
               </li>
             ))
           : ""}
+        <li key={0}>
+          <div
+            className="cursor-pointer dropdown-item text-base py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
+            onClick={() => setStatus({ id: 0, name: "Tất cả" })}
+          >
+            Tất cả
+          </div>
+        </li>
       </ul>
     </div>
   );

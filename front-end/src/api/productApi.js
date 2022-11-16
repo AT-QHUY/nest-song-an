@@ -5,6 +5,10 @@ export const productApi = {
         return adminAxios.get("/product");
     },
 
+    getCountProductOnBill: () => {
+        return adminAxios.get("product/count-on-bill");
+    },
+
     getProductByPage: async (offset, limit) => {
         try {
            
@@ -40,6 +44,10 @@ export const productApi = {
     getProductById: (id) => {
         return adminAxios.get(`/product/${id}`);
     },
+
+    getProductByCateId: (cateId) => {
+        return adminAxios.get(`/product/search-by-cateid/${cateId}`)
+    },
     getCategory: () => {
         return adminAxios.get("/category");
     },
@@ -48,9 +56,11 @@ export const productApi = {
         return adminAxios.post("/product/filter", data);
     },
 
-    getProductByStatus: (data) => {
-        return adminAxios.post("/product/status", data);
+    getProductByStatus: (status) => {
+        return adminAxios.get(`/product/all?status=${status}`);
     },
+
+ 
 
     // Add new product
 

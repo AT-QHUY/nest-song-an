@@ -30,7 +30,7 @@ export const Filter = () => {
 
     return (
         <div>
-            <div className="md:mt-14 mt-6 ml-10">
+            <div className="md:mt-20 mt-6 ml-10">
                 <div className="m-1 flex flex-col md:text-base text-xs">
                     <Accordion
                         handleCheck={handleCheck}

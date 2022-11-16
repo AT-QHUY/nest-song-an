@@ -46,10 +46,11 @@ export const Delivery = ({ setStep, firstRender }) => {
             </div>
             <div className="mt-10 grid-rows-2 gap-5 grid mb-20">
                 <Input
-                    type="number"
                     label="Số điện thoại"
                     value={userInfo.phoneNumber}
-                    pattern="[0-9]{10}"
+                    type="text"
+                    pattern="0[0-9]{9}"
+                    title="Invalid phone number. Phone number must begin with 0 and have 10 digits"
                     required
                     variant="outlined"
                     handleChange={(value) =>

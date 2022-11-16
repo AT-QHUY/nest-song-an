@@ -16,6 +16,7 @@ export const ShoppingCart = () => {
     useEffect(() => {
         if (!user.token)
             navigate("/sign-in", { state: { alertNotLogin: true } });
+        window.scroll(0, 0);
     }, []);
     // console.log(step);
     return (
@@ -25,7 +26,7 @@ export const ShoppingCart = () => {
                     <div className="py-10">
                         <div className="flex justify-between w-9/12 text-[13px] font-bold uppercase border-2 rounded-full text-center text-black m-auto">
                             <div
-                                className={`rounded-full w-full p-2 py-3 ${
+                                className={`rounded-full cursor-pointer w-full p-2 py-3 ${
                                     step === "cart"
                                         ? "bg-regal-blue text-white"
                                         : ""
@@ -34,7 +35,7 @@ export const ShoppingCart = () => {
                                 Giỏ hàng
                             </div>
                             <div
-                                className={`rounded-full w-full p-2 py-3 ${
+                                className={`rounded-full cursor-pointer w-full p-2 py-3 ${
                                     step === "delivery"
                                         ? "bg-regal-blue text-white"
                                         : ""
@@ -43,7 +44,7 @@ export const ShoppingCart = () => {
                                 Thông tin
                             </div>
                             <div
-                                className={`rounded-full w-full p-2 py-3 ${
+                                className={`rounded-full cursor-pointer w-full p-2 py-3 ${
                                     step === "payment"
                                         ? "bg-regal-blue text-white"
                                         : ""
@@ -52,7 +53,7 @@ export const ShoppingCart = () => {
                                 Thanh toán
                             </div>
                             <div
-                                className={`rounded-full w-full p-2 py-3 ${
+                                className={`rounded-full cursor-pointer w-full p-2 py-3 ${
                                     step === "receipt"
                                         ? "bg-regal-blue text-white"
                                         : ""

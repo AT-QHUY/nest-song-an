@@ -1,11 +1,11 @@
 import adminAxios from "./adminAxios";
 
 export const userApi = {
-    login: (input) => {
-        return adminAxios.post("user/login", input);
+    getAll: () => {
+        return adminAxios.get("user");
     },
-    signUp: (input) => {
-        return adminAxios.post("user/insert", input);
+    getRoles: () => {
+        return adminAxios.get("role");
     },
     getUserByPage: async (offset, limit) => {
         try {
@@ -29,5 +29,18 @@ export const userApi = {
         const token = localStorage.getItem("token");
         const data = { id: id, token: token };
         return adminAxios.get(`user/${id}`, data);
+    },
+    login: (input) => {
+        return adminAxios.post("user/login", input);
+    },
+    loginViaGoogle: (email) => {
+        const data = { username: email };
+        return adminAxios.post("user/login-google", data);
+    },
+    signUp: (input) => {
+        return adminAxios.post("user/insert", input);
+    },
+    updateProfile: (userId, data) => {
+        return adminAxios.post(`user/${userId}`, data);
     },
 };

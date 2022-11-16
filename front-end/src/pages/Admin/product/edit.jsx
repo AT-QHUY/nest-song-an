@@ -1,10 +1,10 @@
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
 import { productApi } from "../../../api/productApi";
 import { AppButton } from "../../../components/Button";
-import { AppForm } from "../../../components/Form";
+import { AppForm, FIELD_TYPES } from "../../../components/Form";
 import { getOptions } from "../../../utils/getOptions";
 import { setInitForm } from "../../../utils/setInitForm";
 import { useGetCategories, useGetProduct } from "./api/hooks";
@@ -26,6 +26,7 @@ export function EditProduct() {
   const { data: categories, loading: loadingCategories } = useGetCategories({});
   //TODO getDetailProduct (1)
   const { data: detailProduct, loading: loadingProducts } = useGetProduct(id);
+  const [listImages, setListImages] = useState([]);
 
   const { handleSubmit, setValue } = methods;
   const navigate = useNavigate();
@@ -48,15 +49,16 @@ export function EditProduct() {
         },
       },
       {
-        type: "text",
+        type: FIELD_TYPES.IMAGE_UPLOAD,
         fieldProps: {
-          label: "Hình ảnh",
+          images: listImages,
+          title: "Danh sách hình ảnh",
+          max: 5,
+          setListImages: setListImages,
+          setValue: setValue,
         },
         formProps: {
-          name: "listImages",
-          rules: {
-            required: "Trường này là bắt buộc",
-          },
+          name: "image",
         },
         cols: {
           xs: 12,
@@ -143,48 +145,36 @@ export function EditProduct() {
         },
       },
     ];
-  }, [categories]);
+  }, [categories, listImages]);
 
   // handleSubmit update it
   const onSubmit = (values) => {
     const data = {
-      name: values.name,
-      quantity: values.quantity,
-      deal: values.deal,
-      description: values.description,
-      basePrice: values.basePrice,
-      cateId: values.cateId,
+      ...values,
+      listImages: listImages,
     };
     productApi
       .updateProductById(id, data)
       .then(() => navigate("/dashboard/product"))
       .catch((err) => console.log(err));
-    console.log(data);
   };
 
   useEffect(() => {
     if (detailProduct) {
+      setListImages(detailProduct.listImages);
       setInitForm(
         detailProduct,
-        [
-          "name",
-          "listImages",
-          "description",
-          "basePrice",
-          "quantity",
-          "cateId",
-          "deal",
-        ],
+        ["name", "description", "basePrice", "quantity", "cateId", "deal"],
         setValue
       );
     }
   }, [detailProduct]);
 
   return (
-    <Paper sx={{ padding: "24px" }}>
+    <Paper sx={{ padding: "24px", marginBottom: "60px" }}>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Box container display={"flex"} justifyContent={"center"}>
+          <Box display={"flex"} justifyContent={"center"}>
             <Box width="100%" paddingLeft="24px" marginTop={"24px"}>
               <Box display={"flex"} justifyContent="flex-start">
                 <Typography

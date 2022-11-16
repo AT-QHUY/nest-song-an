@@ -25,18 +25,18 @@ export const Production = () => {
 
     return (
         <div>
-            <div className="flex md:pt-16 pt-20 bg-gray-100">
-                <div className="md:w-3/12 w-3/12 font-verda pr-12 shadow-md bg-white">
+            <div className="flex md:pt-16 pt-20 bg-gray-100 pb-6">
+                <div className="md:w-3/12 w-3/12 font-verda pr-12 shadow-md bg-white rounded-br-lg">
                     <Filter />
                 </div>
-                <div className="md:w-11/12 w-9/12 md:p-16 md:pl-10 md:ml-4 p-4 shadow-md bg-white">
+                <div className="md:w-11/12 w-9/12 md:p-16 md:pb-12 md:pl-10 md:ml-4 p-4 shadow-md bg-white rounded-bl-lg">
                     <div>
                         <div className="flex flex-col">
-                            <div className="flex mb-4">
+                            <div className="flex mb-7">
                                 <div>
                                     <div className="dropdown relative">
                                         <button
-                                            className="border dropdown-toggle px-6 py-2.5 font-medium text-sm leading-tight rounded-full shadow-md transition duration-150 ease-in-out flex items-center whitespace-nowrap"
+                                            className="border text-blue-500 border-l-blue-400 border-r-blue-400 dropdown-toggle px-6 py-2.5 font-medium text-sm leading-tight rounded-full shadow-md transition duration-150 ease-in-out flex items-center whitespace-nowrap"
                                             type="button"
                                             id="dropdownMenuButton1"
                                             data-bs-toggle="dropdown"

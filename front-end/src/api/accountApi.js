@@ -13,4 +13,19 @@ export const accountApi = {
     blockUser: (id) => {
         return adminAxios.delete(`/user/${id}`);
     },
+    changeStatus: async (id, status) => {
+        try {
+            var res
+            if(status === 1 ){
+                res = await adminAxios.put(`/user/update-unblock/${id}`);
+            }
+            else{
+                res = await adminAxios.delete(`/user/${id}`);
+            }
+            return res;
+        } catch (err) {
+            throw err;
+        }
+    },
+
 };

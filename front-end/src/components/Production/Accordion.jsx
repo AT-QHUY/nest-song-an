@@ -8,7 +8,7 @@ export const Accordion = ({ handleCheck, handleRange }) => {
             <div className="accordion-item bg-white border-b border-gray-200">
                 <h2 className="accordion-header mb-0" id="headingOne5">
                     <button
-                        className=" accordion-button relative flex items-center w-full py-4 px-5 text-base text-gray-800 text-left bg-white border-0 rounded-none transition focus:outline-none"
+                        className=" accordion-button relative flex items-center w-full py-4 px-5 text-base text-gray-800 text-left bg-white border-0 rounded-none transition focus:outline-none font-semibold"
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#collapseOne5"
@@ -40,11 +40,11 @@ export const Accordion = ({ handleCheck, handleRange }) => {
             <div className="accordion-item bg-white border-b border-gray-200">
                 <h2 className="accordion-header mb-0" id="headingTwo5">
                     <button
-                        className=" accordion-button collapsed relative flex items-center w-full py-4 px-5 text-base text-gray-800 text-left bg-white border-0 rounded-none transition focus:outline-none "
+                        className=" accordion-button relative flex items-center w-full py-4 px-5 text-base text-gray-800 text-left bg-white border-0 rounded-none transition focus:outline-none font-semibold"
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#collapseTwo5"
-                        aria-expanded="false"
+                        aria-expanded="true"
                         aria-controls="collapseTwo5"
                     >
                         <div className="mr-3 font-semibold text-zinc-500">
@@ -55,7 +55,7 @@ export const Accordion = ({ handleCheck, handleRange }) => {
                 </h2>
                 <div
                     id="collapseTwo5"
-                    className="accordion-collapse collapse"
+                    className="accordion-collapse collapse show"
                     aria-labelledby="headingTwo5"
                 >
                     <div className="accordion-body pb-16 pt-4 mx-2 text-xs">
