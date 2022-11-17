@@ -60,13 +60,13 @@ export const Production = () => {
                                             </svg>
                                         </button>
                                         <ul
-                                            className=" dropdown-menu min-w-max absolute bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg shadow-lg mt-1 hidden m-0 bg-clip-padding border "
+                                            className=" dropdown-menu min-w-max absolute bg-white text-base z-10 float-left py-2 list-none text-left rounded-lg shadow-lg shadow-gray-400 mt-1 hidden m-0 bg-clip-padding border-2 "
                                             aria-labelledby="dropdownMenuButton1"
                                         >
                                             {cateList.map((cate) => (
                                                 <li key={cate.id}>
                                                     <div
-                                                        className="cursor-pointer dropdown-item text-base py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
+                                                        className="cursor-pointer dropdown-item text-base py-2 px-4 font-semibold block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-blue-100 "
                                                         onClick={() =>
                                                             setCategory(cate)
                                                         }
@@ -77,7 +77,7 @@ export const Production = () => {
                                             ))}
                                             <li key={0}>
                                                 <div
-                                                    className="cursor-pointer dropdown-item text-base py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
+                                                    className="cursor-pointer dropdown-item text-base py-2 px-4 font-semibold block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-blue-100 "
                                                     onClick={() =>
                                                         setCategory({
                                                             id: 0,

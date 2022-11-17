@@ -16,9 +16,13 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Rating,
+    TextField,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import { Box } from "@mui/system";
+// import { Rating } from "react-simple-star-rating";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -49,11 +53,14 @@ function createData(id, product, quantity, price) {
     };
 }
 
-export const OrderCard = ({ card, handleCancelOrder }) => {
+export const OrderCard = ({ card, handleCancelOrder, handleSendRating }) => {
     const [confirmBox, setConfirmBox] = React.useState(false);
+    const [ratingBox, setRatingBox] = React.useState(false);
     const rows = card.listBillDetails.map((data) =>
         createData(data.id, data.product, data.quantity, data.price)
     );
+    const [rating, setRating] = React.useState(1);
+    const [comment, setComment] = React.useState("");
 
     const status = [
         { color: "", title: "" },
@@ -122,6 +129,69 @@ export const OrderCard = ({ card, handleCancelOrder }) => {
                             Hủy đơn
                         </Button>
                         <Button onClick={() => setConfirmBox(false)} autoFocus>
+                            Đóng
+                        </Button>
+                    </Box>
+                </Dialog>
+            )}
+            {ratingBox && (
+                <Dialog
+                    open={ratingBox}
+                    onClose={() => setRatingBox(false)}
+                    sx={{ textAlign: "center" }}
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        <ThumbUpOutlinedIcon
+                            sx={{
+                                // fontSize: "px",
+                                margin: "8px",
+                                width: "65px",
+                                height: "65px",
+                                color: "green",
+                                opacity: "0.8",
+                            }}
+                        />
+                    </DialogTitle>
+                    <Box className="mx-28">
+                        <Rating
+                            name="size-large"
+                            value={rating}
+                            defaultValue={1}
+                            sx={{ fontSize: 45 }}
+                            onChange={(event, newValue) => {
+                                setRating(newValue);
+                            }}
+                        />
+                    </Box>
+                    <TextField
+                        id="filled-multiline-flexible"
+                        label="Nhận xét"
+                        multiline
+                        rows={3}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        variant="filled"
+                        sx={{ marginX: "20px", marginY: "10px" }}
+                    />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            marginY: "10px",
+                        }}
+                    >
+                        <Button
+                            onClick={() =>
+                                handleSendRating(rating, comment, () =>
+                                    setRatingBox(false)
+                                )
+                            }
+                            color="success"
+                            autoFocus
+                        >
+                            Đánh giá
+                        </Button>
+                        <Button onClick={() => setRatingBox(false)}>
                             Đóng
                         </Button>
                     </Box>
@@ -254,7 +324,7 @@ export const OrderCard = ({ card, handleCancelOrder }) => {
                     </div>
 
                     <div className="relative mr-6 mb-4">
-                        {card.status === 3 ? (
+                        {/* {card.status === 3 ? (
                             <Button
                                 variant="contained"
                                 color="success"
@@ -269,10 +339,11 @@ export const OrderCard = ({ card, handleCancelOrder }) => {
                                     left: "-20px",
                                     bottom: "4px",
                                 }}
+                                onClick={() => setRatingBox(true)}
                             >
                                 Đánh giá
-                            </Button>
-                        ) : card.status === 2 ? (
+                            </Button> */}
+                        {card.status === 2 ? (
                             <Button
                                 variant="contained"
                                 color="error"

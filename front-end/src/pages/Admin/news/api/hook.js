@@ -1,16 +1,20 @@
 import { data } from "autoprefixer";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { newApi } from "../../../../api/newApi";
+import { NEWS_LOADING_ALL_SUCCESS } from "../../../../features/new/newSlice";
 
 export const useGetNews = (skipFetch = false) => {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const dispatch = useDispatch();
 
     const getNews = async () => {
         setLoading(true);
         try {
             const response = await newApi.getAllNew();
+            dispatch(NEWS_LOADING_ALL_SUCCESS(response));
             setNews(response);
         } catch (error) {
             console.log(error);
@@ -80,7 +84,8 @@ export const useGetCategories = (skipFetch = false) => {
     const getCategories = async () => {
         setLoading(true);
         try {
-            const response = await newApi.setCategories(response);
+            const response = await newApi.getAllCate();
+            setCategories(response);
         } catch (error) {
             if (error.response.status < 500) {
                 setError("Không tìm thấy");

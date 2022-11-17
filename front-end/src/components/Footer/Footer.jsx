@@ -6,7 +6,7 @@ import logo from "./../../assets/icons/SongAnLogo.png";
 import { Button, CircularProgress, Slide } from "@mui/material";
 import sendIcon from "../../assets/icons/Vector.png";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mailApi } from "../../api/mailApi";
 
 export const Footer = () => {
@@ -101,6 +101,7 @@ export const Footer = () => {
                         onSubmit={handleSubmit(onSubmit)}
                     >
                         <input
+                            id="sendEmail"
                             {...register("userEmail")}
                             type="text"
                             className="h-10 bg-inherit text-base w-64 outline-none px-2"

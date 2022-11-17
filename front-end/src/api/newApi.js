@@ -5,7 +5,7 @@ export const newApi = {
         return adminAxios.get("/news/all");
     },
     getAllCate: () => {
-        return adminAxios.get("/news/category");
+        return adminAxios.get("/news-category");
     },
     getNewById: (id) => {
         return adminAxios.get(`/news/${id}`);

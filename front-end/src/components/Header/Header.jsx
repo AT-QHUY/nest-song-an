@@ -58,7 +58,7 @@ const Header = () => {
     };
 
     return (
-        <div className="fixed w-full z-10">
+        <div className="fixed w-full z-20">
             <div className="flex justify-between bg-[#000000CC]/75 text-white my-0">
                 <Link
                     to="/"
@@ -98,7 +98,7 @@ const Header = () => {
                             </div>
                             <input
                                 type="search"
-                                className="border-2 focus:outline-none block p-3 pl-12 w-full text-sm text-gray-900 bg-gray-50 rounded-xl dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white"
+                                className="border-2 focus:outline-none block p-3 pl-12 w-full text-sm text-gray-900 bg-gray-50 rounded-full dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Tìm kiếm sản phẩm"
                                 pattern="[^'\x22]+"
                                 title="Invalid input"

@@ -36,6 +36,7 @@ export const NewDetail = () => {
 
     let newDes = [];
     if (news.new.description) newDes = news.new.description.split("\n");
+    console.log(news.new);
 
     return (
         <>
@@ -45,14 +46,21 @@ export const NewDetail = () => {
                 navigate("*")
             ) : (
                 <>
-                    <div className="pt-52 bg-gray-100"></div>
+                    <div
+                        className="pt-72 bg-fixed bg-no-repeat bg-cover"
+                        style={{
+                            backgroundImage: `url(
+                                ${news.new.listImages?.[0].imgPath}
+                            )`,
+                        }}
+                    ></div>
                     <div className="pt-10 px-64">
                         <h1 className="text-4xl uppercase font-bold">
                             {news.new.title}
                         </h1>
                         <div className="text-gray-400 font-serif mt-3 flex justify-between">
                             <div>Ngày: {newDes[1]}</div>
-                            <div>{newDes[2]}</div>
+                            <div>Danh mục: {news.new.cate?.title}</div>
                         </div>
 
                         <div className="border-t-2 w-full border-gray-200 my-10" />
@@ -61,7 +69,9 @@ export const NewDetail = () => {
                                 {newDes.map(
                                     (para, index) =>
                                         index > 2 && (
-                                            <div className="my-5">{para}</div>
+                                            <div className="my-5" key={index}>
+                                                {para}
+                                            </div>
                                         )
                                 )}
                             </div>

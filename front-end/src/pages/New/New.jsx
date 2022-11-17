@@ -3,29 +3,19 @@ import { Link, Navigate } from "react-router-dom";
 import { Footer } from "../../components/Footer/Footer";
 import { Loading } from "../../components/Loading/Loading";
 import { Pagination } from "../../components/Pagination/Pagination";
-import {
-    useGetCategories,
-    useGetNewByPageAndCategory,
-    useGetNews,
-} from "../Admin/news/api/hook";
+import { useGetCategories, useGetNews } from "../Admin/news/api/hook";
 
 export const New = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(8);
     const { data: news, error: errorNews, loading: loadingNews } = useGetNews();
-    // const {
-    //     data: cateList,
-    //     error: errorCateList,
-    //     loading: loadingCateList,
-    // } = useGetCategories();
-
-    // const {
-    //     data: newList,
-    //     error: errorNews,
-    //     loading: loadingNews,
-    // } = useGetNewByPageAndCategory(page, pageSize, 1);
-
-    // console.log(cateList, errorCateList, loadingCateList);
+    const [category, setCategory] = useState({ id: 0, title: "Phân loại" });
+    const {
+        data: cateList,
+        error: errorCateList,
+        loading: loadingCateList,
+    } = useGetCategories();
+    console.log(cateList);
 
     if (loadingNews) return <Loading />;
 
@@ -43,7 +33,7 @@ export const New = () => {
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
-                            {/* {category.name} */} Phân loại
+                            {category.title}
                             <svg
                                 aria-hidden="true"
                                 focusable="false"
@@ -61,46 +51,33 @@ export const New = () => {
                             </svg>
                         </button>
                         <div
-                            className="dropdown-menu min-w-max absolute bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg shadow-lg mt-1 hidden m-0 bg-clip-padding border "
+                            className="dropdown-menu min-w-max absolute bg-white text-base z-10 float-left py-2 list-none text-left rounded-lg shadow-lg shadow-gray-400 mt-1 hidden m-0 bg-clip-padding border-2 "
                             aria-labelledby="dropdownMenuButton1"
                         >
                             <div className="flex p-2 gap-2">
-                                {/* {cateList.map((cate) => (
+                                {cateList.map((cate) => (
                                     <li key={cate.id}>
                                         <div
-                                            className="cursor-pointer dropdown-item text-base py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
+                                            className="cursor-pointer font-semibold dropdown-item text-base py-2 px-4 block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-red-100"
                                             onClick={() => setCategory(cate)}
                                         >
-                                            {cate.name}
+                                            {cate.title}
                                         </div>
                                     </li>
-                                ))} */}
-                                <div key={0}>
+                                ))}
+                                <li key={0}>
                                     <div
-                                        className="cursor-pointer dropdown-item text-base py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
-                                        // onClick={() =>
-                                        //     setCategory({
-                                        //         id: 0,
-                                        //         name: "Tất cả",
-                                        //     })
-                                        // }
+                                        className="cursor-pointer font-semibold dropdown-item text-base py-2 px-4 block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-red-100 "
+                                        onClick={() =>
+                                            setCategory({
+                                                id: 0,
+                                                title: "Tất cả",
+                                            })
+                                        }
                                     >
                                         Tất cả
                                     </div>
-                                </div>
-                                <div key={1}>
-                                    <div
-                                        className="cursor-pointer dropdown-item text-base py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100 "
-                                        // onClick={() =>
-                                        //     setCategory({
-                                        //         id: 0,
-                                        //         name: "Tất cả",
-                                        //     })
-                                        // }
-                                    >
-                                        Tất cả
-                                    </div>
-                                </div>
+                                </li>
                             </div>
                         </div>
                     </div>
@@ -108,7 +85,9 @@ export const New = () => {
                         {news.map(
                             (card, index) =>
                                 index < page * pageSize &&
-                                index >= (page - 1) * pageSize && (
+                                index >= (page - 1) * pageSize &&
+                                (card.cate.id === category.id ||
+                                    category.id === 0) && (
                                     <Link
                                         to={`/new/${card.id}`}
                                         key={card.id}

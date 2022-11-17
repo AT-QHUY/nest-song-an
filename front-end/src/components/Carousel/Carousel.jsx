@@ -38,7 +38,7 @@ export const Carousel = ({ data }) => {
                         onClick={() => window.scrollTo(0, 0)}
                     >
                         <img
-                            src={item.listImages[0].imgPath}
+                            src={item.listImages[0]?.imgPath}
                             alt={item.name}
                             className="aspect-square object-cover relative rounded-md"
                             onMouseOver={(e) =>

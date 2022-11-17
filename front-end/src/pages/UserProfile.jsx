@@ -54,10 +54,9 @@ export const UserProfile = () => {
                 ...data,
                 ...userInfo,
             });
-            if (response.status === 200) {
-                dispatch(USER_UPDATE_SUCCESS());
-                setReRender(true);
-            }
+            localStorage.setItem("token", JSON.stringify(response));
+            dispatch(USER_UPDATE_SUCCESS());
+            setReRender(true);
         } catch (error) {
             console.log(error);
         }
@@ -142,7 +141,7 @@ export const UserProfile = () => {
                                 </Link>
                             </div>
                             <div className="py-1 hover:border-b-2 hover:border-b-cyan-500">
-                                <Link to="/production ">
+                                <Link to="/production">
                                     <Inventory2Icon fontSize="large" />
                                 </Link>
                             </div>

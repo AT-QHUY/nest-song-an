@@ -51,12 +51,15 @@ export const HeaderBottom = () => {
                 </Link>
                 <button
                     className={`transition-colors flex items-center duration-300 h-full px-3 hover:text-cyan-300`}
-                    onClick={() =>
+                    onClick={() => {
                         window.scroll({
                             top: document.body.scrollHeight,
                             behavior: "smooth",
-                        })
-                    }
+                        });
+                        setTimeout(() => {
+                            document.getElementById("sendEmail").focus();
+                        }, 1000);
+                    }}
                 >
                     Liên hệ
                 </button>

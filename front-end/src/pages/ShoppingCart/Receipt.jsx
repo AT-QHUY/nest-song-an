@@ -10,12 +10,23 @@ export const Receipt = () => {
                 Đơn hàng của bạn sẽ được giao trong vòng 7 ngày. Mọi chi tiết,
                 thắc mắc của khách hàng có thể liên hệ với chúng tôi thông qua
                 phần liên hệ bên dưới cùng của website{" "}
-                <span className="underline font-medium text-cyan-400 cursor-pointer">
+                <span
+                    className="underline font-medium text-cyan-400 cursor-pointer"
+                    onClick={() => {
+                        window.scroll({
+                            top: document.body.scrollHeight,
+                            behavior: "smooth",
+                        });
+                        setTimeout(() => {
+                            document.getElementById("sendEmail").focus();
+                        }, 500);
+                    }}
+                >
                     Liên hệ
                 </span>
             </div>
             <div className="text-center mt-5">
-                Theo dõi tiến trình đơn hàng thông qua phần{" "}
+                Theo dõi tiến trình đơn hàng, hoặc hủy đơn thông qua phần{" "}
                 <Link to="/order" onClick={() => window.scrollTo(0, 0)}>
                     <span className="underline font-medium text-cyan-400 cursor-pointer">
                         Đơn mua

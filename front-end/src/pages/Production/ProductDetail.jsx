@@ -90,6 +90,8 @@ export const ProductDetail = () => {
         else setAlertCart(true);
     };
 
+    console.log(product);
+
     return (
         <>
             {alertCart && (

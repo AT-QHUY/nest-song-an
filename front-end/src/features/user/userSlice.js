@@ -53,8 +53,9 @@ export const userSlice = createSlice({
             state.isloggedOutSuccess = null;
         },
         USER_UPDATE_SUCCESS: (state) => {
-            state.loading = false;
+            state.token = getTokenDataFromLocalStorage();
             state.userInfor = convertTokenToObject();
+            state.loading = false;
         },
     },
 });

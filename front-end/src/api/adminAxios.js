@@ -1,5 +1,5 @@
 import axios from "axios";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 const adminAxios = axios.create({
     // baseURL: process.env.REACT_APP_API_URL,
@@ -13,14 +13,14 @@ const adminAxios = axios.create({
     },
 });
 adminAxios.interceptors.request.use(
-    config => {
-      config.headers['Authorization'] = localStorage.getItem('token');
-          return config;
-      },
-      error => {
-          return Promise.reject(error);
-      }
-  );
+    (config) => {
+        config.headers["Authorization"] = localStorage.getItem("token");
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 adminAxios.interceptors.response.use(
     (response) => {
@@ -32,24 +32,24 @@ adminAxios.interceptors.response.use(
     (error) => {
         console.log(error.response.status);
 
-        if (error.response.status  === 401) {
-            localStorage.clear()
+        if (error.response.status === 401) {
+            localStorage.clear();
             Swal.fire({
-                title: ' Phiên đăng nhập hết hạn!',
-                text: 'Tài khoản của bạn đã hết hạn!',
+                title: " Phiên đăng nhập hết hạn!",
+                text: "Tài khoản của bạn đã hết hạn!",
                 showClass: {
-                    popup: 'animate__animated animate__fadeInDown'
-                  },
-                  hideClass: {
-                    popup: 'animate__animated animate__fadeOutUp'
-                  },
-                icon: 'error',
-                confirmButtonText: 'OK'
-              }).then((confirm) => {
-                window.location.href = "http://localhost:3000/sign-in";
-              })
-
-       }
+                    popup: "animate__animated animate__fadeInDown",
+                },
+                hideClass: {
+                    popup: "animate__animated animate__fadeOutUp",
+                },
+                icon: "error",
+                confirmButtonText: "OK",
+            }).then((confirm) => {
+                window.location.href =
+                    "http://nest-song-an-bucket.s3-website-ap-southeast-1.amazonaws.com/sign-in";
+            });
+        }
         throw error;
     }
 );

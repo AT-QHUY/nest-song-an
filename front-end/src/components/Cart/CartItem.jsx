@@ -1,20 +1,32 @@
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CircularProgress, Skeleton } from "@mui/material";
+import { useEffect } from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { convertPriceToString } from "../../utils/serverUtils";
 
-export const CartItem = ({ item, handleChangeAmount, handleDelete }) => {
+export const CartItem = ({
+    item,
+    handleChangeAmount,
+    handleDelete,
+    reRender,
+    setReRender,
+}) => {
     const [amount, setAmount] = useState(item.quantity);
     const [loading, setLoading] = useState(false);
 
     const cartTimeoutRef = useRef(null);
     const firstUpdate = useRef(true);
+    const firstReRender = useRef(true);
 
     useLayoutEffect(() => {
         if (firstUpdate.current) {
             firstUpdate.current = false;
+            return;
+        }
+        if (reRender) {
+            setReRender(false);
             return;
         }
         if (cartTimeoutRef.current) clearTimeout(cartTimeoutRef.current);
@@ -26,6 +38,14 @@ export const CartItem = ({ item, handleChangeAmount, handleDelete }) => {
             );
         }, 700);
     }, [amount]);
+
+    useLayoutEffect(() => {
+        if (firstReRender.current) {
+            firstReRender.current = false;
+            return;
+        }
+        if (reRender) setAmount(item.quantity);
+    }, [reRender]);
 
     return (
         <>

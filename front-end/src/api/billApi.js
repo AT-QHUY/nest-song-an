@@ -27,7 +27,7 @@ export const billApi = {
     payment: (data) => {
         return adminAxios.post("/cart/buy/customer", data);
     },
-    getTotalPriceByMonth:()=>{
+    getTotalPriceByMonth: () => {
         return adminAxios.get("bill/total-by-month");
     },
     addToCart: (userId, product, quantity) => {

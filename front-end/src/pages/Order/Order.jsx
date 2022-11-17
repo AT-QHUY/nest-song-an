@@ -83,6 +83,22 @@ export const Order = () => {
         }
     };
 
+    const handleSendRating = async (rating, comment, callback) => {
+        try {
+            console.log(rating, comment);
+            // dispatch(ORDER_LOADING());
+            // const response = await billApi.cancelBill(billId);
+            // console.log(response);
+            // dispatch(ORDER_CANCEL(billId));
+            callback();
+            setReRender(true);
+        } catch (error) {
+            // const errorMessage = getErrorMessageFromServer(error);
+            // console.log(error);
+            // dispatch(ORDER_LOADING_FAIL(errorMessage));
+        }
+    };
+
     if (reRender) setReRender(false);
 
     return (
@@ -125,6 +141,7 @@ export const Order = () => {
                             card={card}
                             key={index}
                             handleCancelOrder={handleCancelOrder}
+                            handleSendRating={handleSendRating}
                         />
                     ))}
                 </div>

@@ -182,7 +182,7 @@ export const List = ({ inProductPage, category }) => {
                                                 <img
                                                     src={
                                                         card.listImages[0]
-                                                            .imgPath
+                                                            ?.imgPath
                                                     }
                                                     className="object-cover aspect-square rounded-md"
                                                 />
